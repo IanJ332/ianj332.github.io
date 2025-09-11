@@ -5,6 +5,11 @@ npm start to check the revised
 npm deploy直接部署
 注意现在你的分支本地叫做main，但是远端是master，所以当前的package.json是有修改的 -->
 
+<!-- 之前有更改：
+原来是这个
+  "deploy": "gh-pages -b master -d build",
+后面改成了这个
+    "deploy": "gh-pages -b gh-pages -d build", -->
 # Software Developer Folio ⚡️ [![GitHub](https://img.shields.io/github/license/saadpasta/developer-portfolio?color=blue)](https://github.com/saadpasta/developerFolio/blob/master/LICENSE) [![GitHub stars](https://img.shields.io/github/stars/saadpasta/developerFolio)](https://github.com/saadpasta/developerFolio/stargazers)  [![All Contributors](https://img.shields.io/badge/all_contributors-4-orange.svg?style=flat-square)](#contributors)
 
 ## A clean, beautiful and responsive portfolio template for Developers!
