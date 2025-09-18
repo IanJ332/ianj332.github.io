@@ -2,7 +2,7 @@
 npm start to check the revised
 不分先后
 然后就add . commit进行备份
-npm deploy直接部署
+npm run deploy直接部署
 注意现在你的分支本地叫做main，但是远端是master，所以当前的package.json是有修改的 -->
 
 <!-- 之前有更改：

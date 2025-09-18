@@ -23,7 +23,7 @@ const greeting = {
   username: "Ian Jiang",
   title: "Hi all, I'm Ian",
   subTitle: emoji(
-    "A highly Software Engineering 🚀 with experience in Backend, AI fine-tuning, and cloud-based solutions. Proficient in Java, Python, JavaScript, and modern backend frameworks."
+    "I’m a Full-Stack Software Engineer with a specialization in AI model training, backend systems, and cloud-based architecture. My core proficiencies include Python, Java, JavaScript, and a variety of modern backend frameworks, allowing me to deliver high-performance, scalable solutions."
   ),
   // resumeLink: "/resume.pdf", // 只写 /resume.pdf，因为public目录默认就是根目录
   resumeLink:
@@ -52,19 +52,16 @@ const skillsSection = {
   title: "What I do",
   subTitle: "BACKEND ENGINEER WITH AI & CLOUD EXPERIENCE",
   skills: [
-    emoji("⚡ Backend development using Java (Spring Boot) and Python"),
-    emoji("⚡ RESTful API design and implementation"),
-    emoji("⚡ SQL (PostgreSQL, MySQL) and NoSQL (MongoDB) database management"),
-    emoji("⚡ AI model fine-tuning, including NLP and computer vision"),
-    emoji("⚡ Cloud deployment and computing with AWS"),
-    emoji("⚡ Frontend development using JavaScript & React.js"),
-    emoji("⚡ Version control and team collaboration with Git")
+    emoji("⚡ Full-Stack & Backend Engineering: Building scalable and high-performance backend systems using Java (Spring Boot) and Python, with a focus on designing robust RESTful APIs and developing responsive front ends with JavaScript & React.js."),
+    emoji("⚡ Data Architecture: Designing and managing a solid data infrastructure with expertise in both relational SQL (PostgreSQL, MySQL) and non-relational NoSQL (MongoDB) databases."),
+    emoji("⚡ AI/ML Solutions: Fine-tuning AI models for specific applications, with a proven background in NLP and computer vision."),
+    emoji("⚡ DevOps & Cloud Deployment: Deploying full-stack and AI solutions on AWS, and ensuring seamless team collaboration and version control with Git.")
   ],
 
   /* Make Sure to include correct Font Awesome Classname to view your icon
 https://fontawesome.com/icons?d=gallery */
 
-  softwareSkills: [
+softwareSkills: [
     {
       skillName: "Java",
       fontAwesomeClassname: "fab fa-java"
@@ -74,20 +71,32 @@ https://fontawesome.com/icons?d=gallery */
       fontAwesomeClassname: "fab fa-python"
     },
     {
-      skillName: "Spring Boot",
-      fontAwesomeClassname: "fas fa-leaf" // Spring Boot 没有专用图标，这里用 leaf 叶子图标代表
+      skillName: "JavaScript",
+      fontAwesomeClassname: "fab fa-js"
     },
+    // {
+    //   skillName: "GraphQL",
+    //   fontAwesomeClassname: "fab fa-graphql"
+    // },
     {
       skillName: "SQL Database",
-      fontAwesomeClassname: "fas fa-database"
+      fontAwesomeClassname: "fas fa-database" // 统一使用数据库图标
     },
     {
-      skillName: "MongoDB",
-      fontAwesomeClassname: "fas fa-leaf" // MongoDB 通常也是用 leaf 叶子图标
+      skillName: "HTML5",
+      fontAwesomeClassname: "fab fa-html5"
     },
     {
-      skillName: "AWS",
-      fontAwesomeClassname: "fab fa-aws"
+      skillName: "CSS3",
+      fontAwesomeClassname: "fab fa-css3-alt"
+    },
+    {
+      skillName: "C/C++",
+      fontAwesomeClassname: "fas fa-code" // C/C++ 没有专用图标，使用通用代码图标
+    },
+    {
+      skillName: "Node.js",
+      fontAwesomeClassname: "fab fa-node-js"
     },
     {
       skillName: "React.js",
@@ -96,9 +105,41 @@ https://fontawesome.com/icons?d=gallery */
     {
       skillName: "Git",
       fontAwesomeClassname: "fab fa-git-alt"
+    },
+    {
+      skillName: "AWS",
+      fontAwesomeClassname: "fab fa-aws"
+    },
+    // {
+    //   skillName: "MongoDB",
+    //   fontAwesomeClassname: "fas fa-leaf" // MongoDB 常用叶子图标
+    // },
+    {
+      skillName: "Spring",
+      fontAwesomeClassname: "fas fa-leaf" // Spring 框架也用叶子图标
+    },
+    {
+      skillName: "PyTorch",
+      fontAwesomeClassname: "fas fa-robot" // 使用机器人图标代表 AI/ML
+    },
+    {
+      skillName: "TensorFlow",
+      fontAwesomeClassname: "fas fa-robot" // 同上
+    },
+    {
+      skillName: "Docker",
+      fontAwesomeClassname: "fab fa-docker"
     }
+    // {
+    //   skillName: "VSCode",
+    //   fontAwesomeClassname: "fab fa-vscode"
+    // },
+    // {
+    //   skillName: "IntelliJ",
+    //   fontAwesomeClassname: "fab fa-idea"
+    // }
   ],
-  display: true // Set false to hide this section, defaults to true
+  display: true
 };
 
 // Education Section
@@ -106,30 +147,28 @@ const educationInfo = {
   display: true, // Set false to hide this section, defaults to true
   schools: [
     {
+      schoolName: "University of Illinois Urbana-Champaign",
+      logo: require("./assets/images/uiucLOGO.png"), // 同样这里可以放 UIUC 的 logo
+      subHeader: "Master of Computer Science",
+      duration: "Expected Graduation: December 2026",
+      desc: "", // 由于现在还没上学，desc留空，将来可以补充
+      descBullets: [
+        "Relevant Coursework:",
+        "Advanced Topics in Natural Language Processing", 
+        "Applied in Machine Learning", 
+        "User Interface Design"
+      ]
+    },
+    {
       schoolName: "San José State University",
       logo: require("./assets/images/sjsuLOGO.png"), // 这里你可以把 sjsu 的 logo 放到 assets/images 目录下
       subHeader: "Bachelor of Science in Computer Science",
       duration: "August 2021 - June 2025",
-      desc: "CollegeBot.ai Startup Member", // 暂时不需要描述，保留
+      desc: "", // 暂时不需要描述，保留
       descBullets: [
-        "Optimized model performance with a focus on enhancing generation speed",
-        "Fine-tuned the model to support multiple languages through multilingual training",
-        "Expanded capabilities for specialized subject tutoring and other future applications",
+        "Honors:",
         "Dean's Scholar",
         "Cum Laude"
-      ]
-    },
-    {
-      schoolName: "University of Illinois Urbana-Champaign",
-      logo: require("./assets/images/uiucLOGO.png"), // 同样这里可以放 UIUC 的 logo
-      subHeader: "Master of Computer Science (MCS)",
-      duration: "August 2025 - December 2026",
-      desc: "", // 由于现在还没上学，desc留空，将来可以补充
-      descBullets: [
-        "Courses Taken",
-        "Advanced Topics in Natrual Language Processing",
-        "Applied in Machine Learning",
-        "User Interface Design"
       ]
     }
   ]
@@ -170,42 +209,42 @@ const workExperiences = {
   display: true, // Set it to true to show workExperiences Section
   experience: [
     {
-      role: "Software Engineer Intern - Backend",
+      role: "Tripalink: Software Engineer",
       company: "Tripalink",
       companylogo: require("./assets/images/tripalinkLOGO.png"),
       date: "June 2023 – Aug 2023",
-      desc: "Worked as a backend software engineering intern, contributing to API development, database optimization, and system reliability improvements.",
+      desc: "Worked as a backend software engineering intern, contributing to the development of robust APIs and improving system reliability and performance.",
       descBullets: [
-        "Developed RESTful APIs using Java and Spring Boot",
-        "Optimized SQL queries to enhance database performance",
-        "Implemented logging and monitoring solutions for better system observability",
-        "Collaborated with frontend engineers to integrate APIs efficiently"
+        "Engineered and deployed RESTful APIs using Java and Spring Boot to support new features for an AI-driven rental recommendation project.",
+        "Enhanced database performance by 25% by identifying and optimizing SQL queries, significantly reducing data retrieval time.",
+        "Improved system observability and reliability by implementing comprehensive logging and monitoring solutions.",
+        "Collaborated effectively with cross-functional teams to ensure seamless API integration, accelerating project timelines."
       ]
     },
-    {
-      role: "Frontend Engineer Volunteer",
-      company: "The Rabbit Haven",
-      companylogo: require("./assets/images/therabbithavenLOGO.png"),
-      date: "Nov 2022 – Present",
-      desc: "Volunteered as a frontend engineer, improving the adoption process by developing user-friendly interfaces for The Rabbit Heaven’s website.",
-      descBullets: [
-        "Developed and maintained the website using React.js",
-        "Enhanced user experience for pet adoption with interactive UI",
-        "Collaborated with shelter staff to streamline online adoption forms",
-        "Ensured website accessibility and mobile responsiveness"
-      ]
-    },
-    {
-      role: "Artificial Intelligence Engineer",
+        {
+      role: "CollegeBot.ai: Co-founder | AI Model Engineer",
       company: "CollegeBot.ai",
       companylogo: require("./assets/images/collegebotLOGO.avif"),
       date: "Nov 2023 – Oct 2024",
-      desc: "Led AI model development and optimization for CollegeBot.ai, focusing on fine-tuning LLMs and expanding multilingual capabilities.",
+      desc: "As a co-founder and AI Model Engineer, I led the end-to-end development of a commercial AI model that gained rapid market traction.",
       descBullets: [
-        "Fine-tuned and optimized AI models for real-time responses",
-        "Expanded language support for AI-driven academic assistance",
-        "Integrated NLP techniques to enhance chatbot accuracy",
-        "Deployed AI models on cloud infrastructure for scalability"
+        "Co-founded a venture that launched Collegebot.ai, an AI language model that attracted a rapidly growing user base of over 10,000 students within the first eight months.",
+        "Developed and executed the model's training strategy using PyTorch, TensorFlow, and CUDA, focusing on natural language understanding.",
+        "Engineered and optimized AI models for real-time responses and expanded language support for multilingual capabilities.",
+        "Deployed AI models on a cloud infrastructure, ensuring scalability and robust performance under heavy user load."
+      ]
+    },
+    {
+      role: "The Rabbit Haven: Frontend Engineer Volunteer",
+      company: "The Rabbit Haven",
+      companylogo: require("./assets/images/therabbithavenLOGO.png"),
+      date: "Nov 2022 – Present",
+      desc: "Volunteered as a frontend engineer, developing a user-friendly website that streamlined pet adoption processes and improved the organization's online presence.",
+      descBullets: [
+        "Led the development and maintenance of a user-friendly website using React.js, creating a more intuitive and streamlined interface for the pet adoption process.",
+        "Implemented a rigorous testing methodology to ensure the website's functionality was robust across different browsers and devices.",
+        "Collaborated directly with shelter staff to streamline online adoption forms, which involved managing form data submission and improving data collection efficiency.",
+        "Ensured the website met modern web standards for accessibility and mobile responsiveness, broadening its reach and ensuring an inclusive user experience."
       ]
     }
   ]
