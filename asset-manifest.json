@@ -1,7 +1,7 @@
 {
   "files": {
     "main.css": "/static/css/main.9c9afc7d.css",
-    "main.js": "/static/js/main.2e06ad64.js",
+    "main.js": "/static/js/main.cc25f5f9.js",
     "static/css/64.bba8fa55.chunk.css": "/static/css/64.bba8fa55.chunk.css",
     "static/js/64.56dc6704.chunk.js": "/static/js/64.56dc6704.chunk.js",
     "static/css/769.b3cbb36b.chunk.css": "/static/css/769.b3cbb36b.chunk.css",
@@ -9,7 +9,7 @@
     "static/media/therabbithavenLOGO.png": "/static/media/therabbithavenLOGO.c0083a9bb1d5c7c44161.png",
     "static/media/helperbobLOGO.png": "/static/media/helperbobLOGO.a81af9b4b177b05b5791.png",
     "static/media/Montserrat-Regular.ttf": "/static/media/Montserrat-Regular.3cd786652b8a2e9d41f2.ttf",
-    "static/media/resume.pdf": "/static/media/resume.9c64c77cea0345cd1dc8.pdf",
+    "static/media/resume.pdf": "/static/media/resume.c64692e6109499453927.pdf",
     "static/media/Agustina.woff": "/static/media/Agustina.eb0c59dda4cc308cba96.woff",
     "static/media/sjsuLOGO.png": "/static/media/sjsuLOGO.2fe806c3d139b50e2c23.png",
     "static/media/manOnTable.svg": "/static/media/manOnTable.8f117eb207e57ed8f89d67d595aceb45.svg",
@@ -23,7 +23,7 @@
     "index.html": "/index.html",
     "static/media/talksCardBack.svg": "/static/media/talksCardBack.73ed1545d58273ba64b0.svg",
     "main.9c9afc7d.css.map": "/static/css/main.9c9afc7d.css.map",
-    "main.2e06ad64.js.map": "/static/js/main.2e06ad64.js.map",
+    "main.cc25f5f9.js.map": "/static/js/main.cc25f5f9.js.map",
     "64.bba8fa55.chunk.css.map": "/static/css/64.bba8fa55.chunk.css.map",
     "64.56dc6704.chunk.js.map": "/static/js/64.56dc6704.chunk.js.map",
     "769.b3cbb36b.chunk.css.map": "/static/css/769.b3cbb36b.chunk.css.map",
@@ -31,6 +31,6 @@
   },
   "entrypoints": [
     "static/css/main.9c9afc7d.css",
-    "static/js/main.2e06ad64.js"
+    "static/js/main.cc25f5f9.js"
   ]
 }
