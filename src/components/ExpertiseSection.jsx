@@ -24,9 +24,16 @@ const ExpertiseSection = () => {
             return (
                 <span>
                     {parts[0]}
-                    <span className="inline-flex items-center gap-1.5 bg-amber-500/10 dark:bg-[#FFD700]/10 border border-amber-500/20 dark:border-[#FFD700]/20 px-2 py-0.5 rounded-full mx-1 align-bottom transform translate-y-[-2px]">
+                    <motion.a
+                        href="https://github.com/sickn33/antigravity-awesome-skills"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        whileHover={{ scale: 1.15 }}
+                        whileTap={{ scale: 0.95 }}
+                        className="inline-flex items-center gap-1.5 bg-amber-500/10 dark:bg-[#FFD700]/10 border border-amber-500/20 dark:border-[#FFD700]/20 px-2 py-0.5 rounded-full mx-1 align-bottom transform translate-y-[-2px]"
+                    >
                         <span className="text-xs font-medium text-amber-600 dark:text-[#FFD700] whitespace-nowrap">{stars} ⭐</span>
-                    </span>
+                    </motion.a>
                     {parts[1]}
                 </span>
             );

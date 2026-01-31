@@ -222,14 +222,16 @@ const ProjectCard = ({ project, index }) => {
                 <div className="flex gap-4 items-center">
                     {/* Star Badge moved here */}
                     {stars && (
-                        <a
+                        <motion.a
                             href={`https://github.com/${project.githubRepo}`}
                             target="_blank"
                             rel="noopener noreferrer"
+                            whileHover={{ scale: 1.15 }}
+                            whileTap={{ scale: 0.95 }}
                             className="flex items-center gap-1.5 bg-amber-500/10 dark:bg-[#FFD700]/10 border border-amber-500/20 dark:border-[#FFD700]/20 px-2 py-0.5 rounded-full hover:bg-amber-500/20 dark:hover:bg-[#FFD700]/20 transition-all mr-2"
                         >
                             <span className="text-[10px] text-amber-600 dark:text-[#FFD700] whitespace-nowrap font-medium">{stars} ⭐</span>
-                        </a>
+                        </motion.a>
                     )}
 
                     {project.footerLink?.map((link, i) => (
