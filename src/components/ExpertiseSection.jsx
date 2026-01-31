@@ -4,6 +4,36 @@ import { skillsSection } from '../data/portfolio';
 import TechTree from './TechTree';
 
 const ExpertiseSection = () => {
+    const [stars, setStars] = React.useState('5.9k');
+
+    React.useEffect(() => {
+        fetch('https://api.github.com/repos/sickn33/antigravity-awesome-skills')
+            .then(res => res.json())
+            .then(data => {
+                if (data.stargazers_count) {
+                    setStars((data.stargazers_count / 1000).toFixed(1) + 'k');
+                }
+            })
+            .catch(e => console.error("Error fetching stars:", e));
+    }, []);
+
+    const renderDescription = (description) => {
+        // Check for the specific static string to replace
+        if (description.includes('5.9K stars')) {
+            const parts = description.split('5.9K stars');
+            return (
+                <span>
+                    {parts[0]}
+                    <span className="inline-flex items-center gap-1.5 bg-amber-500/10 dark:bg-[#FFD700]/10 border border-amber-500/20 dark:border-[#FFD700]/20 px-2 py-0.5 rounded-full mx-1 align-bottom transform translate-y-[-2px]">
+                        <span className="text-xs font-medium text-amber-600 dark:text-[#FFD700] whitespace-nowrap">{stars} ⭐</span>
+                    </span>
+                    {parts[1]}
+                </span>
+            );
+        }
+        return description;
+    };
+
     return (
         <section id="expertise" className="py-20 md:py-32 relative">
             <div className="container mx-auto px-6 md:px-8">
@@ -47,7 +77,7 @@ const ExpertiseSection = () => {
                                                         {title}:
                                                     </h4>
                                                     <p className="text-[var(--text-dim)]/80 leading-relaxed font-light text-lg font-body pl-9 group-hover:text-[var(--text-main)] transition-colors">
-                                                        {description}
+                                                        {renderDescription(description)}
                                                     </p>
                                                 </div>
                                             </motion.div>
