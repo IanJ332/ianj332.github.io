@@ -30,23 +30,29 @@ const ExpertiseSection = () => {
                             <div className="md:pl-12 border-l border-[var(--border-dim)] h-full">
                                 <h3 className="font-display text-3xl text-[var(--text-main)] mb-8">Core Competencies</h3>
                                 <div className="space-y-8">
-                                    {skillsSection.skills.map((skill, index) => (
-                                        <motion.div
-                                            key={index}
-                                            initial={{ opacity: 0, x: 10 }}
-                                            whileInView={{ opacity: 1, x: 0 }}
-                                            viewport={{ once: true }}
-                                            transition={{ delay: index * 0.1 }}
-                                            className="group"
-                                        >
-                                            <div className="flex gap-4">
-                                                <span className="text-indigo-400/40 font-mono mt-[5px] text-base group-hover:text-indigo-400 transition-colors">0{index + 1}</span>
-                                                <p className="text-[var(--text-dim)]/80 leading-relaxed font-light text-lg font-body group-hover:text-[var(--text-main)] transition-colors">
-                                                    {skill}
-                                                </p>
-                                            </div>
-                                        </motion.div>
-                                    ))}
+                                    {skillsSection.skills.map((skill, index) => {
+                                        const [title, description] = skill.split(':');
+                                        return (
+                                            <motion.div
+                                                key={index}
+                                                initial={{ opacity: 0, x: 10 }}
+                                                whileInView={{ opacity: 1, x: 0 }}
+                                                viewport={{ once: true }}
+                                                transition={{ delay: index * 0.1 }}
+                                                className="group"
+                                            >
+                                                <div className="flex flex-col gap-2">
+                                                    <h4 className="flex items-center gap-4 text-xl font-display font-medium text-[var(--text-main)]">
+                                                        <span className="text-indigo-500/40 font-mono text-base group-hover:text-indigo-500 transition-colors">0{index + 1}</span>
+                                                        {title}:
+                                                    </h4>
+                                                    <p className="text-[var(--text-dim)]/80 leading-relaxed font-light text-lg font-body pl-9 group-hover:text-[var(--text-main)] transition-colors">
+                                                        {description}
+                                                    </p>
+                                                </div>
+                                            </motion.div>
+                                        );
+                                    })}
                                 </div>
                             </div>
                         </div>

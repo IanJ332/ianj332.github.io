@@ -48,11 +48,11 @@ const skillsSection = {
   title: "Technical Expertise",
   subTitle: "FULL-STACK | DATA | AI | SYSTEMS",
   skills: [
-    emoji("⚡ Full-Stack & Backend Engineering: Building scalable and high-performance systems with Java (Spring Boot), Python, and TypeScript. Experienced in architecting robust RESTful APIs and developing sleek, responsive front-ends using Next.js, React.js, and Tailwind CSS."),
-    emoji("⚡ Data Architecture & Cloud: Designing resilient data infrastructures with a mastery of Postgres (Supabase), MySQL, and NoSQL (MongoDB). Proficient in deploying full-stack and AI solutions via AWS and managing continuous integration through Git."),
-    emoji("⚡ AI/ML & LLM Orchestration: Specialized in fine-tuning Large Language Models and building LLM Infrastructure. Proven track record in NLP (Multi-Agent Debate), Computer Vision (Sign Language Recognition), and real-time Sentiment Analysis."),
-    emoji("⚡ Mobile & System Design: Architecting native mobile experiences with Kotlin (MVVM) and optimizing system-level performance with C/C++. Focused on bridging complex algorithms with user-centric interface design."),
-    emoji("⚡ Open Source & Community: Core contributor to 'antigravity-awesome-skills', an high-impact repository with over 5.4K stars, specializing in AI-agentic coding patterns and advanced frontend design.")
+    "Full-Stack & Backend Engineering: Building scalable and high-performance systems with Java (Spring Boot), Python, and TypeScript. Experienced in architecting robust RESTful APIs and developing sleek, responsive front-ends using Next.js, React.js, and Tailwind CSS.",
+    "Data Architecture & Cloud: Designing resilient data infrastructures with a mastery of Postgres (Supabase), MySQL, and NoSQL (MongoDB). Proficient in deploying full-stack and AI solutions via AWS and managing continuous integration through Git.",
+    "AI/ML & LLM Orchestration: Specialized in fine-tuning Large Language Models and building LLM Infrastructure. Proven track record in NLP (Multi-Agent Debate), Computer Vision (Sign Language Recognition), and real-time Sentiment Analysis.",
+    "Mobile & System Design: Architecting native mobile experiences with Kotlin (MVVM) and optimizing system-level performance with C/C++. Focused on bridging complex algorithms with user-centric interface design.",
+    "Open Source & Community: Core contributor to 'antigravity-awesome-skills', an high-impact repository with over 5.4K stars, specializing in AI-agentic coding patterns and advanced frontend design."
   ],
   softwareSkills: [
     {
