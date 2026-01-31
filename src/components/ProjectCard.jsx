@@ -203,21 +203,7 @@ const ProjectCard = ({ project, index }) => {
             transition={{ duration: 0.5, delay: index * 0.05 }}
             className="flex flex-col h-full bg-[var(--bg-card)] border border-[var(--border-dim)] rounded-lg overflow-hidden hover:border-[var(--text-main)]/[0.15] transition-colors duration-300 shadow-2xl shadow-black/5"
         >
-            <WindowHeader
-                title={title}
-                rightContent={
-                    stars && (
-                        <a
-                            href={`https://github.com/${project.githubRepo}`}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="flex items-center gap-1.5 bg-[#FFD700]/10 border border-[#FFD700]/20 px-2 py-0.5 rounded-full hover:bg-[#FFD700]/20 transition-all"
-                        >
-                            <span className="text-[10px] text-[#FFD700] whitespace-nowrap">{stars} ⭐</span>
-                        </a>
-                    )
-                }
-            />
+            <WindowHeader title={title} />
 
             <div className="flex-grow flex flex-col">
                 {isVisual ? (
@@ -233,7 +219,19 @@ const ProjectCard = ({ project, index }) => {
                     {subtitle || "Application"}
                 </span>
 
-                <div className="flex gap-4">
+                <div className="flex gap-4 items-center">
+                    {/* Star Badge moved here */}
+                    {stars && (
+                        <a
+                            href={`https://github.com/${project.githubRepo}`}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="flex items-center gap-1.5 bg-amber-500/10 dark:bg-[#FFD700]/10 border border-amber-500/20 dark:border-[#FFD700]/20 px-2 py-0.5 rounded-full hover:bg-amber-500/20 dark:hover:bg-[#FFD700]/20 transition-all mr-2"
+                        >
+                            <span className="text-[10px] text-amber-600 dark:text-[#FFD700] whitespace-nowrap font-medium">{stars} ⭐</span>
+                        </a>
+                    )}
+
                     {project.footerLink?.map((link, i) => (
                         <a
                             key={i}

@@ -52,7 +52,7 @@ const skillsSection = {
     "Data Architecture & Cloud: Designing resilient data infrastructures with a mastery of Postgres (Supabase), MySQL, and NoSQL (MongoDB). Proficient in deploying full-stack and AI solutions via AWS and managing continuous integration through Git.",
     "AI/ML & LLM Orchestration: Specialized in fine-tuning Large Language Models and building LLM Infrastructure. Proven track record in NLP (Multi-Agent Debate), Computer Vision (Sign Language Recognition), and real-time Sentiment Analysis.",
     "Mobile & System Design: Architecting native mobile experiences with Kotlin (MVVM) and optimizing system-level performance with C/C++. Focused on bridging complex algorithms with user-centric interface design.",
-    "Open Source & Community: Core contributor to 'antigravity-awesome-skills', an high-impact repository with over 5.4K stars, specializing in AI-agentic coding patterns and advanced frontend design."
+    "Open Source & Community: Core contributor to 'antigravity-awesome-skills', an high-impact repository with over 5.9K stars, specializing in AI-agentic coding patterns and advanced frontend design."
   ],
   softwareSkills: [
     {
@@ -249,7 +249,7 @@ const bigProjects = {
     },
     {
       projectName: "Antigravity",
-      projectDesc: "A high-impact open-source repository gathering advanced agentic coding skills. Successfully reached 5.4K+ Stars on GitHub as a key contributor.",
+      projectDesc: "A high-impact open-source repository gathering advanced agentic coding skills. Successfully reached 5.9K+ Stars on GitHub as a key contributor.",
       stack: ["Open Source", "Design", "Agentic Coding"],
       letterLogo: ["Antigravity", "Awesome", "Skills"],
       githubRepo: "sickn33/antigravity-awesome-skills",
