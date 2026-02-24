@@ -1,4 +1,5 @@
 # Ian Jiang - Portfolio 2.0
+![Total Stars](https://img.shields.io/endpoint?url=https://ianj332.github.io/stars.json)
 
 A refined, high-performance portfolio built with **Vite, React, and TailwindCSS**.
 Designed with the "Refined Technical Editorial" aesthetic.
