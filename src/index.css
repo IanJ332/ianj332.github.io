@@ -25,14 +25,14 @@
     @apply bg-[var(--bg-main)] text-[var(--text-main)] font-body selection:bg-indigo-500/30 selection:text-indigo-900 dark:selection:text-white antialiased transition-colors duration-500;
   }
 
-  /* Anthropic-style Serif Headings */
+  /* Headings default to sans text */
   h1,
   h2,
   h3,
   h4,
   h5,
   h6 {
-    @apply font-display tracking-tight text-[var(--text-main)] font-medium;
+    @apply font-body tracking-tight text-[var(--text-main)] font-semibold;
   }
 }
 

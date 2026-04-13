@@ -45,31 +45,26 @@ const socialMediaLinks = {
 // Skills Section
 
 const skillsSection = {
-  title: "Technical Expertise",
-  subTitle: "FULL-STACK | DATA | AI | SYSTEMS",
-  skills: [
-    "Full-Stack & Backend Engineering: Building scalable and high-performance systems with Java (Spring Boot), Python, and TypeScript. Experienced in architecting robust RESTful APIs and developing sleek, responsive front-ends using Next.js, React.js, and Tailwind CSS.",
-    "Data Architecture & Cloud: Designing resilient data infrastructures with a mastery of Postgres (Supabase), MySQL, and NoSQL (MongoDB). Proficient in deploying full-stack and AI solutions via AWS and managing continuous integration through Git.",
-    "AI/ML & LLM Orchestration: Specialized in fine-tuning Large Language Models and building LLM Infrastructure. Proven track record in NLP (Multi-Agent Debate), Computer Vision (Sign Language Recognition), and real-time Sentiment Analysis.",
-    "Mobile & System Design: Architecting native mobile experiences with Kotlin (MVVM) and optimizing system-level performance with C/C++. Focused on bridging complex algorithms with user-centric interface design.",
-    "Open Source & Community: Core contributor to 'antigravity-awesome-skills', an high-impact repository with over 5.9K stars, specializing in AI-agentic coding patterns and advanced frontend design."
-  ],
+  title: "Technical Skills",
+  subTitle: "",
+  introText: "I build production-grade AI and backend systems, with experience across LLM applications, retrieval pipelines, and scalable web products.",
+  skills: [], // Removed verbose prose
   softwareSkills: [
     {
-      category: "Languages",
-      skills: ["Java", "Python", "TypeScript", "JavaScript", "SQL", "C++", "C"]
+      category: "Backend & Platform",
+      skills: ["Java", "Spring Boot", "Python", "TypeScript", "REST", "GraphQL", "Kubernetes", "AWS", "GCP"]
     },
     {
-      category: "Web Frameworks",
-      skills: ["Next.js", "React", "Spring Boot", "Node.js", "NestJS", "Express"]
+      category: "AI Systems",
+      skills: ["RAG", "LLM routing", "context management", "vector search", "inference optimization", "GAN"]
     },
     {
-      category: "Tools & Databases",
-      skills: ["PostgreSQL (Supabase)", "MySQL", "MongoDB", "Redis", "AWS", "Git", "Docker"]
+      category: "Data & Storage",
+      skills: ["PostgreSQL", "MySQL", "Redis", "MongoDB", "ETL", "Supabase", "FAISS", "Milvus"]
     },
     {
-      category: "AI/ML Frameworks",
-      skills: ["PyTorch", "TensorFlow", "Keras", "HuggingFace", "ONNX"]
+      category: "Frontend",
+      skills: ["React", "Next.js", "UI implementation", "performance tuning"]
     }
   ],
   display: true
@@ -83,23 +78,21 @@ const educationInfo = {
       schoolName: "University of Illinois Urbana-Champaign",
       logo: "/assets/images/uiucLOGO.png",
       subHeader: "Master of Computer Science",
-      duration: "Expected Graduation: December 2026",
-      desc: "", // 由于现在还没上学，desc留空，将来可以补充
+      duration: "Expected Graduation: Dec 2026",
+      desc: "",
       descBullets: [
-        "Relevant Coursework:",
-        "Advanced Topics in Natural Language Processing",
-        "Applied in Machine Learning",
-        "User Interface Design"
+        "GPA: 3.6/4.0",
+        "Member, AI Alignment Illinois"
       ]
     },
     {
       schoolName: "San José State University",
       logo: "/assets/images/sjsuLOGO.png",
-      subHeader: "Bachelor of Science in Computer Science",
+      subHeader: "B.S. in Computer Science",
       duration: "August 2021 - June 2025",
-      desc: "", // 暂时不需要描述，保留
+      desc: "",
       descBullets: [
-        "Honors:",
+        "GPA: 3.7/4.0",
         "Dean's Scholar",
         "Cum Laude"
       ]
@@ -113,37 +106,59 @@ const workExperiences = {
   display: true, // Set it to true to show workExperiences Section
   experience: [
     {
-      role: "Co-founder & AI Model Engineer",
-      company: "CollegeBot.AI",
-      companylogo: "/assets/images/collegebotLOGO.avif",
-      url: "https://collegebot.ai/",
-      date: "Nov 2024 – Present",
-      desc: "Co-founded and scaled an AI-driven educational platform to over 10,000 students, streamlining access to complex university resources.",
+      role: "Machine Learning Researcher",
+      company: "UIUC AI Alignment Lab",
+      companylogo: "/assets/images/uiucLOGO.png",
+      date: "Expected Graduation: Dec 2026",
+      desc: "",
       descBullets: [
-        "Developed and executed the model's training strategy using PyTorch, TensorFlow, and CUDA, focusing on Natural Language Understanding (NLU) to accurately interpret university policies and academic programs.",
-        "Launched Collegebot.ai, attracting a rapidly growing user base of over 10,000 students within the first eight months."
+        "Built a **Multi-Agent Debate** framework with role-specialized personas and **dynamic anchoring** to reduce consensus drift in complex reasoning tasks.",
+        "Developed a critic-actor revision pipeline with **3D confidence scoring**, improving reasoning accuracy by **40%+**."
       ]
     },
     {
-      role: "Software Engineer (Intern)",
+      role: "Co-founder · AI Model Engineer",
+      company: "VideoTutor.ai",
+      companylogo: "",
+      date: "Nov 2024 - Oct 2025",
+      desc: "",
+      descBullets: [
+        "Built a **LangChain** routing classifier to dispatch requests by query complexity, reducing model API costs by **30%**.",
+        "Designed a **Databricks + FAISS** distillation pipeline and shared-context **RAG** flow for **30K+ users**, reducing latency and improving response consistency."
+      ]
+    },
+    {
+      role: "LLM Infrastructure Engineer",
+      company: "CollegeBot.ai",
+      companylogo: "/assets/images/collegebotLOGO.avif",
+      date: "Jan 2024 - Oct 2024",
+      desc: "",
+      descBullets: [
+        "Developed a **Milvus-backed stateful memory engine** for persona-specific context across long-form agent interactions.",
+        "Optimized task decomposition, function calling, and orchestration flows to improve reliability on complex instructions."
+      ]
+    },
+    {
+      role: "Software Engineer Intern",
       company: "TRIPALINK",
       companylogo: "/assets/images/Tripalink.png",
-      date: "June 2023 – Aug 2023",
-      desc: "Engineered backend APIs for an AI-driven rental recommendation engine and led the successful deployment of the management system software.",
+      date: "Jun 2023 - Aug 2023",
+      desc: "",
       descBullets: [
-        "Designed and implemented new APIs using Java, Python, and GraphQL to process apartment rental applications, while utilizing React.js, SpringBoot, and Maven for system-wide rollouts.",
-        "Improved system observability and reliability by implementing comprehensive logging and monitoring solutions."
+        "Built **Java / Spring Boot** microservices and **GraphQL / REST APIs** on **AWS** to accelerate tenant-analysis workflows by **80%**.",
+        "Improved retrieval performance with **Redis** and **PostgreSQL** indexing, reducing data-access latency by **25%**.",
+        "Maintained **CI/CD** and end-to-end testing workflows with **Jenkins, Maven, and Postman**, reducing manual deployment overhead by **80%**."
       ]
     },
     {
-      role: "Software Engineer",
+      role: "Volunteer Software Engineer",
       company: "The Rabbit Haven",
       companylogo: "/assets/images/therabbithavenLOGO.png",
-      date: "Nov 2022 – May 2025",
-      desc: "Led a critical digital transformation for a non-profit organization, optimizing adoption processes and staff workflows.",
+      date: "Nov 2022 - May 2023",
+      desc: "",
       descBullets: [
-        "Enhanced operational resilience by digitizing adoption forms and automating information synchronization, maintaining service levels despite external resource constraints.",
-        "Collaborated directly with shelter staff to streamline online adoption forms, which involved managing form data submission and improving data collection efficiency."
+        "Rebuilt the **React** portal and digitized adoption workflows for non-technical shelter staff, automating Python-based **ETL** synchronization into **MySQL** and saving about **35 minutes** per adoption task.",
+        "Built a concurrency-safe **ETL pipeline** using pessimistic locking to maintain **ACID** transactional consistency."
       ]
     }
   ]
@@ -152,114 +167,111 @@ const workExperiences = {
 // Some big projects you have worked on
 
 const bigProjects = {
-  title: "Featured Work",
+  title: "Selected Works",
   subtitle: "SOFTWARE ENGINEERING & AI RESEARCH",
-  projects: [
+  featuredProjects: [
     {
-      projectName: "Liquidity: Full-Stack Bank Simulation",
-      projectDesc: "A robust financial platform built with Next.js and Supabase (PostgreSQL), featuring atomic transaction handling and real-time balance updates.",
-      stack: ["Next.js", "Supabase", "PostgreSQL"],
-      letterLogo: ["Liquidity"],
+      projectName: "Antigravity Awesome Skills",
+      subtitle: "Core Contributor",
+      featuredSummary: "Core contributor focused on **backend harness engineering** and **hazard-tagging** for safer skill execution.",
+      descBullets: [
+        "Spearheaded backend harness architecture for **AWS/GCP + NoSQL** skill modules, helping standardize cross-regional backend topologies.",
+        "Leading and engineered a **Hazard-Tagging (Risk Classification)** system via rigorous skill testing, safeguarding database integrity against unverified AI-generated code executions."
+      ],
+      stack: ["Open Source", "Design", "Agentic Coding"],
       footerLink: [
         {
-          name: "Website/Repo",
-          url: "https://github.com/ehcaw/Liquidity"
+          name: "View GitHub repo",
+          url: "https://github.com/sickn33/antigravity-awesome-skills"
         }
       ]
     },
     {
-      image: "/assets/images/bake wise.png",
-      projectName: "BakeWise: Guided Sourdough Assistant",
-      projectDesc: "An Android application (Kotlin, MVVM) that utilizes a proprietary backward scheduling algorithm to translate complex fermentation biology into actionable user guidance.",
-      stack: ["Kotlin", "Android", "MVVM"],
-      objFit: "object-contain",
-      footerLink: [
-        {
-          name: "Repo",
-          url: "https://github.com/IanJ332/BakeWise"
-        }
-      ]
-    },
-    {
-      projectName: "MAD",
-      projectDesc: "A research project exploring a novel critic-actor architecture to address the 'majority error problem' in LLM reasoning, enhancing system accuracy by defending minority agent positions.",
-      stack: ["LLM", "Research", "Python"],
-      letterLogo: ["Multi", "Agent", "Debate"],
-      footerLink: [
-        {
-          name: "Repo",
-          url: "https://github.com/nilgeoutim/CS546_MajorityErrorDebate"
-        },
-        {
-          name: "Paper",
-          url: "https://github.com/nilgeoutim/CS546_MajorityErrorDebate/blob/main/CS546_GP.pdf"
-        }
-      ]
-    },
-    {
-      projectName: "Lite-MSA: Real-Time Multimodal Sentiment Analysis",
-      projectDesc: "A low-latency (ms) edge system integrating 1D-CNN with quantized HuBERT/DistilRoberta for high-accuracy sentiment detection across heterogeneous datasets.",
+      projectName: "Multimodal Sentiment Analysis System",
+      featuredSummary: "Real-time multimodal sentiment analysis pipeline optimized for low-latency streaming inference.",
+      descBullets: [
+        "Built a **VAD-gated FastAPI/WebSocket** pipeline for live multimodal inference.",
+        "Applied **Int8 quantization** and **entropy-based fusion** to keep latency below **300ms**.",
+        "Reached **85%** multimodal accuracy while maintaining real-time responsiveness."
+      ],
       stack: ["Python", "PyTorch", "CNN", "HuBERT"],
-      letterLogo: ["Multilingual", "Speaker", "Attributed"],
       footerLink: [
         {
-          name: "Repo",
+          name: "View GitHub repo",
           url: "https://github.com/IanJ332/Lite-MSA-Stream"
         }
       ]
     },
     {
-      image: "/assets/images/how2signlogo.png",
-      projectName: "Sign Language Recognition (BO + CNN + LSTM)",
-      projectDesc: "A full-stack deep learning pipeline using a MobileNetV2 backbone and Bayesian Optimization (Optuna) to boost recognition performance by 25%.",
-      stack: ["Python", "TensorFlow", "Optuna"],
-      objFit: "object-contain",
+      projectName: "BakeWise",
+      image: "/assets/images/bake wise.png",
+      featuredSummary: "Full-stack IoT tracking and fermentation assistant built with **Kotlin (MVVM)** and **FastAPI**, combining a custom scheduling system with Gemini-based analysis.",
+      descBullets: [
+        "Architected a full-stack IoT tracking ecosystem with **Kotlin (MVVM)** and **FastAPI** for guided fermentation workflows.",
+        "Integrated a custom **backward-scheduling algorithm** and the **Gemini API** for real-time fermentation analysis.",
+        "Designed a **Harness Security Architecture** to sandbox AI outputs, establishing a secure **AI development flow** and leveraging **GitHub Copilot + Jira/Linear** for rapid team state synchronization. "
+      ],
+      stack: ["Kotlin", "Android", "MVVM"],
       footerLink: [
         {
-          name: "Repo",
+          name: "View GitHub repo",
+          url: "https://github.com/IanJ332/BakeWise"
+        }
+      ]
+    }
+  ],
+  otherProjects: [
+    {
+      projectName: "Sign Language Recognition",
+      image: "/assets/images/how2signlogo.png",
+      description: "Automated hyperparameter tuning for a MobileNetV2 + CNN-LSTM backbone via Bayesian Optimization, reaching 98.4% accuracy.",
+      stack: ["Python", "TensorFlow", "Optuna"],
+      footerLink: [
+        {
+          name: "View GitHub repo",
           url: "https://github.com/IanJ332/Sign_language_translator"
         }
       ]
     },
     {
+      projectName: "Helper Bob: LLM Infrastructure",
       image: "/assets/images/helperbobLOGO.svg",
-      projectName: "Helper Bob: LLM Infrastructure & Orchestration",
-      projectDesc: "A specialized project focused on an advanced Prompt Engineering and Orchestration Layer designed to minimize conversational drift and maximize user-perceived coherence.",
-      stack: ["LLM", "Orchestration", "System Design"],
-      objFit: "object-contain",
+      description: "Advanced Prompt Engineering and Orchestration Layer to minimize conversational drift.",
+      stack: ["LLM", "System Design"],
       footerLink: [
         {
-          name: "Link",
+          name: "Open HuggingFace Model",
           url: "https://huggingface.co/Ian332/Helper_Bob"
         }
       ]
     },
     {
-      image: "/assets/images/kimi-color.png",
-      projectName: "Kimi.ai: LLM Infrastructure Engineer",
-      projectDesc: "Developed a sophisticated Context Management System to capture and persist user persona memory and dialogue history for seamless conversational flows.",
-      stack: ["LLM Infrastructure", "Context Mgmt", "Production"],
-      objFit: "object-contain",
+      projectName: "MAD: Majority Error Debate",
+      description: "A novel critic-actor architecture enhancing LLM accuracy against minority agent hallucination positions.",
+      stack: ["LLM", "Research", "Python"],
       footerLink: [
         {
-          name: "Website",
-          url: "https://www.kimi.com/en"
+          name: "View GitHub repo",
+          url: "https://github.com/nilgeoutim/CS546_MajorityErrorDebate"
+        },
+        {
+          name: "View Paper",
+          url: "https://github.com/nilgeoutim/CS546_MajorityErrorDebate/blob/main/CS546_GP.pdf"
         }
       ]
     },
     {
-      projectName: "Antigravity",
-      projectDesc: "A high-impact open-source repository gathering advanced agentic coding skills. Successfully reached 5.9K+ Stars on GitHub as a key contributor.",
-      stack: ["Open Source", "Design", "Agentic Coding"],
-      letterLogo: ["Antigravity", "Awesome", "Skills"],
-      githubRepo: "sickn33/antigravity-awesome-skills",
+      projectName: "Liquidity: Bank Simulation",
+      description: "Robust financial platform with Next.js/Supabase handling atomic transactions and real-time updates.",
+      stack: ["Next.js", "Supabase", "PostgreSQL"],
       footerLink: [
         {
-          name: "Repo",
-          url: "https://github.com/sickn33/antigravity-awesome-skills"
+          name: "View GitHub repo",
+          url: "https://github.com/ehcaw/Liquidity"
         }
       ]
     }
+    // Note: Kimi.ai project entry removed to avoid double-counting experience
   ],
   display: true
 };

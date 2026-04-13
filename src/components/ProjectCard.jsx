@@ -1,6 +1,7 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { Github, ArrowUpRight, Terminal, Minimize, Maximize, X } from 'lucide-react';
+import { formatText } from '../utils/formatText';
 
 const WindowHeader = ({ title, rightContent }) => (
     <div className="flex items-center justify-between px-4 py-3 border-b border-[var(--border-dim)] bg-[var(--bg-card)]/[0.02]">
@@ -41,8 +42,8 @@ const TerminalView = ({ project }) => {
                     <span className="text-[var(--text-dim)]/60">cat</span>
                     <span className="text-indigo-400">README.md</span>
                 </div>
-                <div className="pt-4 pl-4 border-l-2 border-[var(--border-dim)] text-[var(--text-dim)]/70 leading-relaxed text-[13px]">
-                    {project.projectDesc}
+                <div className="pt-4 pl-4 border-l-2 border-[var(--border-dim)] text-[var(--text-dim)]/80 leading-relaxed text-[14px]">
+                    {formatText(project.projectDesc)}
                 </div>
 
                 <div className="pt-6">
@@ -158,8 +159,8 @@ const MediaView = ({ project }) => {
                 <Content />
             )}  {/* Compact Details Area */}
             <div className="p-5 bg-[var(--bg-card)]/[0.01]">
-                <p className="font-body text-xs md:text-sm text-[var(--text-dim)]/70 leading-relaxed line-clamp-3 mb-4">
-                    {project.projectDesc}
+                <p className="font-body text-sm md:text-base text-[var(--text-dim)]/80 leading-relaxed line-clamp-3 mb-4">
+                    {formatText(project.projectDesc)}
                 </p>
                 <div className="flex flex-wrap gap-2">
                     {project.stack?.slice(0, 3).map((tech, i) => (
