@@ -109,11 +109,11 @@ const workExperiences = {
       role: "Machine Learning Researcher",
       company: "UIUC AI Alignment Lab",
       companylogo: "/assets/images/uiucLOGO.png",
-      date: "Expected Graduation: Dec 2026",
+      date: "Member since Jan 2026",
       desc: "",
       descBullets: [
-        "Built a **Multi-Agent Debate** framework with role-specialized personas and **dynamic anchoring** to reduce consensus drift in complex reasoning tasks.",
-        "Developed a critic-actor revision pipeline with **3D confidence scoring**, improving reasoning accuracy by **40%+**."
+        "Led and engineered a **Multi-Agent Debate** framework with role-specialized personas and **dynamic anchoring** to reduce and resolving correlated reasoning failures and consensus drift in complex reasoning tasks. ",
+        "Developed a critic-actor revision pipeline with **3D confidence scoring**, by implementing Calculate the logic score, the confidence score, and the reasoning & question alignment score to shape LLM reasoning behaviors, improving reasoning accuracy by **40%+**."
       ]
     },
     {
@@ -123,8 +123,8 @@ const workExperiences = {
       date: "Nov 2024 - Oct 2025",
       desc: "",
       descBullets: [
-        "Built a **LangChain** routing classifier to dispatch requests by query complexity, reducing model API costs by **30%**.",
-        "Designed a **Databricks + FAISS** distillation pipeline and shared-context **RAG** flow for **30K+ users**, reducing latency and improving response consistency."
+        "Deployed a **LangChain** routing classifier to dispatch requests by query complexity, reducing model API costs by **30%**.",
+        "Designed a **Databricks + FAISS** distillation pipeline and shared-context **RAG** flow for **30K+ users**, dynamically mitigate retrieval bias and **significantly reduced latency**."
       ]
     },
     {
@@ -132,9 +132,9 @@ const workExperiences = {
       company: "CollegeBot.ai",
       companylogo: "/assets/images/collegebotLOGO.avif",
       date: "Jan 2024 - Oct 2024",
-      desc: "",
+      desc: "Sponsored by Kimi.ai",
       descBullets: [
-        "Developed a **Milvus-backed stateful memory engine** for persona-specific context across long-form agent interactions.",
+        "Developed a **Milvus-backed stateful memory engine** for persona-specific context across long-form agent interactions. Minimized storage spending, eliminated semantic drift.",
         "Optimized task decomposition, function calling, and orchestration flows to improve reliability on complex instructions."
       ]
     },
@@ -145,7 +145,7 @@ const workExperiences = {
       date: "Jun 2023 - Aug 2023",
       desc: "",
       descBullets: [
-        "Built **Java / Spring Boot** microservices and **GraphQL / REST APIs** on **AWS** to accelerate tenant-analysis workflows by **80%**.",
+        "Architected **Java / Spring Boot** microservices and **GraphQL / REST APIs** on **AWS EKS (Kubernetes)** to accelerate tenant-analysis workflows by **80%**.",
         "Improved retrieval performance with **Redis** and **PostgreSQL** indexing, reducing data-access latency by **25%**.",
         "Maintained **CI/CD** and end-to-end testing workflows with **Jenkins, Maven, and Postman**, reducing manual deployment overhead by **80%**."
       ]
@@ -158,7 +158,7 @@ const workExperiences = {
       desc: "",
       descBullets: [
         "Rebuilt the **React** portal and digitized adoption workflows for non-technical shelter staff, automating Python-based **ETL** synchronization into **MySQL** and saving about **35 minutes** per adoption task.",
-        "Built a concurrency-safe **ETL pipeline** using pessimistic locking to maintain **ACID** transactional consistency."
+        "Implemented Pessimistic Locking, guaranteeing transactional **ACID** correctness and preventing data anomalies under high-concurrency traffic."
       ]
     }
   ]
@@ -205,7 +205,7 @@ const bigProjects = {
     {
       projectName: "BakeWise",
       image: "/assets/images/bake wise.png",
-      featuredSummary: "Full-stack IoT tracking and fermentation assistant built with **Kotlin (MVVM)** and **FastAPI**, combining a custom scheduling system with Gemini-based analysis.",
+      featuredSummary: "A **True AI Fermentation assistant** built with **Kotlin (MVVM)** and **FastAPI**, combining a custom scheduling system with Gemini-based analysis.",
       descBullets: [
         "Architected a full-stack IoT tracking ecosystem with **Kotlin (MVVM)** and **FastAPI** for guided fermentation workflows.",
         "Integrated a custom **backward-scheduling algorithm** and the **Gemini API** for real-time fermentation analysis.",

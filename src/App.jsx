@@ -79,18 +79,18 @@ const TerminalIdentityPanel = ({ stars }) => {
             {/* Terminal Body */}
             <div className="p-5 space-y-5">
                 <TerminalRow prompt="iam whoami">
-                    Software Engineer / ML Engineer
+                    Student / Software Engineer / ML Engineer
                 </TerminalRow>
 
                 <TerminalRow prompt="iam focus">
-                    LLM infra · RAG · multimodal · microservices · AI guardrails
+                    GAN · LLM infra · RAG · multimodal · microservices · AI guardrails
                 </TerminalRow>
 
                 <TerminalRow prompt="iam current">
                     UIUC AI Alignment Lab
                 </TerminalRow>
 
-                <TerminalRow prompt="iam proof">
+                <TerminalRow prompt="iam GitHub contributor">
                     <div className="flex items-center gap-3">
                         {stars && stars !== 'GitHub stars unavailable' ? (
                             <span className="inline-flex items-center gap-1.5 bg-amber-500/10 text-amber-300 border border-amber-500/20 font-body font-medium text-[13px] h-[26px] px-2.5 rounded-full shadow-sm">
@@ -100,7 +100,7 @@ const TerminalIdentityPanel = ({ stars }) => {
                         ) : (
                             <span className="text-gray-500 italic">{stars || 'Loading...'}</span>
                         )}
-                        <span className="text-gray-500 tracking-tight">GitHub contributor</span>
+                        {/* <span className="text-gray-500 tracking-tight">GitHub contributor</span> */}
                     </div>
                 </TerminalRow>
 
@@ -109,7 +109,7 @@ const TerminalIdentityPanel = ({ stars }) => {
                 </TerminalRow>
 
                 <TerminalRow prompt="iam stack">
-                    Python · Java · TypeScript · distributed systems
+                    Python · Java · JavaScript · and more
                 </TerminalRow>
             </div>
         </div>
@@ -237,7 +237,7 @@ const Experience = () => {
 // Featured Project Case Study Row
 const FeaturedProject = ({ project, stars }) => {
     const isAntigravity = project.projectName === "Antigravity Awesome Skills";
-    
+
     return (
         <div className="flex flex-col lg:flex-row gap-8 lg:gap-12 py-10 border-b border-[var(--border-dim)] last:border-0 group flex-1">
             <div className="lg:w-1/3 flex flex-col gap-4">
