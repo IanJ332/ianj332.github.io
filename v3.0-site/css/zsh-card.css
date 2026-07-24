@@ -1,0 +1,121 @@
+/* ==========================================
+   v3.0 ZSH Glassmorphism Identity Terminal Card
+   Phase 2: Geek Visual Reconstruction (Photo 1)
+   ========================================== */
+
+@import url('https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600;700&family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap');
+
+.zsh-terminal-card {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  background: rgba(12, 13, 16, 0.78) !important;
+  backdrop-filter: blur(24px) saturate(190%) !important;
+  -webkit-backdrop-filter: blur(24px) saturate(190%) !important;
+  border: 1px solid rgba(255, 255, 255, 0.14) !important;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6), 0 0 20px rgba(99, 102, 241, 0.15) !important;
+  border-radius: 16px !important;
+  overflow: hidden;
+  max-width: 520px;
+  width: 100%;
+  margin: 0 auto;
+  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.3s ease;
+}
+
+.zsh-terminal-card:hover {
+  transform: translateY(-4px) scale(1.01);
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.7), 0 0 30px rgba(99, 102, 241, 0.25) !important;
+}
+
+/* Terminal Header */
+.zsh-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 16px;
+  background: rgba(255, 255, 255, 0.04);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.zsh-dots {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.zsh-dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  display: inline-block;
+}
+
+.zsh-dot-red { background-color: #ff5f56; }
+.zsh-dot-yellow { background-color: #ffbd2e; }
+.zsh-dot-green { background-color: #27c93f; }
+
+.zsh-title {
+  font-family: 'Fira Code', monospace;
+  font-size: 12px;
+  letter-spacing: 1px;
+  color: rgba(255, 255, 255, 0.5);
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+/* Terminal Body */
+.zsh-body {
+  padding: 24px 28px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.zsh-item {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.zsh-prompt {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-family: 'Fira Code', monospace;
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+}
+
+.zsh-prompt-symbol {
+  color: #10b981; /* Neon green dollar sign */
+}
+
+.zsh-prompt-label {
+  color: rgba(255, 255, 255, 0.45);
+  text-transform: uppercase;
+}
+
+.zsh-val {
+  font-family: 'Space Grotesk', 'Inter', sans-serif;
+  font-size: 16px;
+  font-weight: 700;
+  color: #ffffff;
+  padding-left: 20px;
+  line-height: 1.4;
+}
+
+/* GitHub Star Pill Badge */
+.zsh-star-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 16px;
+  background: rgba(245, 158, 11, 0.14);
+  border: 1px solid rgba(245, 158, 11, 0.5);
+  border-radius: 20px;
+  color: #fbbf24;
+  font-family: 'Fira Code', monospace;
+  font-weight: 700;
+  font-size: 14px;
+  margin-left: 20px;
+  box-shadow: 0 4px 12px rgba(245, 158, 11, 0.15);
+}

@@ -1,0 +1,47 @@
+/* ==========================================
+   v3.0 3D Portfolio Engineering - Pure Glass Works Blur
+   ========================================== */
+
+/* Root setup */
+html, body {
+  background-color: #0b0c10 !important;
+}
+
+canvas {
+  pointer-events: auto !important;
+}
+
+/* Hero & Top Stage: 100% crystal clear, zero blur */
+header,
+nav,
+div[class*="hero"],
+section[class*="hero"],
+div[class*="top"] {
+  background: transparent !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+
+/* 
+   Works / Portfolio / Experience Sections:
+   Override solid dark opaque fills (#0a0c10 / rgb(10,12,16)) with pure translucent 
+   glassmorphism blur (rgba(11, 12, 16, 0.35) + blur(24px)).
+*/
+main section,
+main div[class*="section"],
+div[style*="background-color"],
+div[style*="background:#"],
+div[style*="background: #"],
+div[style*="background:rgb"],
+div[style*="background: rgb"],
+section[class*="portfolio"],
+div[class*="portfolio"],
+div[class*="works"] {
+  background-color: rgba(11, 12, 16, 0.35) !important;
+  background: rgba(11, 12, 16, 0.35) !important;
+  backdrop-filter: blur(24px) saturate(160%) !important;
+  -webkit-backdrop-filter: blur(24px) saturate(160%) !important;
+  width: 100% !important;
+  min-height: 100vh !important;
+  box-shadow: none !important;
+}
