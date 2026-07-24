@@ -6,6 +6,7 @@
     "homepage": "https://ianj332.github.io",
     "scripts": {
         "dev": "vite",
+        "dev:v3": "bash start-v3.sh",
         "update-stars": "node scripts/update-stars.js",
         "prebuild": "npm run update-stars",
         "build": "vite build",

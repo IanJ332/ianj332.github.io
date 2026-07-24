@@ -4,7 +4,14 @@
 A refined, high-performance portfolio built with **Vite, React, and TailwindCSS**.
 Designed with the "Refined Technical Editorial" aesthetic.
 
-## 🚀 Getting Started
+## 🌟 v3.0 3D Rebuild Branch (`v3.0-rebuild`)
+
+The `v3.0-rebuild` branch contains the isolated 3D personal website environment:
+- **Local Dev Server**: `npm run dev:v3` or `bash start-v3.sh`
+- **3D Assets & Site Folder**: [`v3.0-site/`](./v3.0-site/) (Contains HTML, CSS, JS, 10.4MB 3D Model `.glb`, stickers, HDRI maps)
+- **Documentation**: See [`v3.0-site/README.md`](./v3.0-site/README.md) for complete asset details and migration audit.
+
+## 🚀 Getting Started (v2.0)
 
 Since Node.js was not detected in the environment, the project files have been generated but dependencies are not installed.
 
