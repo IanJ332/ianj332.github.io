@@ -188,13 +188,12 @@
     backface-visibility: hidden;
   }
 
+  /* NO mask-image here: the framing solve in AvatarCanvas.jsx already
+     guarantees a top margin, and a mask on the WebGL canvas is one more
+     compositing hazard between browsers for zero visual gain. */
   .avatar-canvas {
     width: 100% !important;
     height: 100% !important;
-    /* Feather the very top of the stage so the crown of the head can never
-       collide hard with the browser chrome or the nav pill. */
-    -webkit-mask-image: linear-gradient(to bottom, transparent 0, #000 6%, #000 100%);
-    mask-image: linear-gradient(to bottom, transparent 0, #000 6%, #000 100%);
   }
 
   /* ── GLASSMORPHISM ───────────────────────────────────────────────────
@@ -285,14 +284,18 @@
 
   .nav-link {
     position: relative;
+    display: inline-block; /* transforms are no-ops on plain inline boxes */
     font-family: 'JetBrains Mono', ui-monospace, monospace;
     font-size: 0.6875rem;
     letter-spacing: 0.16em;
     text-transform: uppercase;
     color: var(--text-dim);
     padding: 0.25rem 0;
-    transition: color var(--dur-fast) var(--ease-in-out-soft);
+    transition:
+      color var(--dur-fast) var(--ease-in-out-soft),
+      transform var(--dur-base) var(--ease-out-expo);
   }
+  .nav-link:hover { transform: translateY(-1px); }
 
   .nav-link::after {
     content: '';
@@ -404,7 +407,7 @@
   }
 
   .skill-tag:hover {
-    transform: translateY(-1px);
+    transform: translateY(-1.5px) scale(1.045);
     border-color: var(--text-accent);
     background: var(--glow-color);
   }
@@ -452,11 +455,11 @@
       filter var(--dur-fast) var(--ease-out-expo);
   }
   .btn-primary:hover {
-    transform: translateY(-2px);
+    transform: translateY(-2px) scale(1.02);
     filter: brightness(1.08);
     box-shadow: 0 12px 28px -10px var(--text-accent);
   }
-  .btn-primary:active { transform: translateY(0); }
+  .btn-primary:active { transform: translateY(0) scale(0.97); }
 
   .btn-icon {
     display: inline-flex;
@@ -474,10 +477,18 @@
       border-color var(--dur-fast) var(--ease-out-expo);
   }
   .btn-icon:hover {
-    transform: translateY(-2px);
+    transform: translateY(-2px) scale(1.06);
     color: var(--text-main);
     border-color: var(--border-strong);
   }
+  .btn-icon:active { transform: translateY(0) scale(0.92); }
+
+  /* The theme toggle's sun/moon glyph pivots on hover — a small cue that the
+     button rotates between two states. */
+  .btn-icon svg {
+    transition: transform var(--dur-base) var(--ease-out-expo);
+  }
+  .btn-icon:hover svg { transform: rotate(18deg); }
 
   /* ── LINK UNDERLINE ──────────────────────────────────────────────── */
   .link-underline {
@@ -576,6 +587,33 @@
     border-radius: 9999px;
     background: radial-gradient(circle, var(--cursor-glow) 0%, transparent 68%);
     will-change: transform;
+  }
+
+  /* Slow ambient sweep on the centre bloom — transform/opacity only, so it
+     stays on the compositor. */
+  .bloom-breathe {
+    animation: bloom-breathe 16s var(--ease-in-out-soft) infinite alternate;
+  }
+
+  @keyframes bloom-breathe {
+    0%   { transform: scale(0.94) translateY(0);     opacity: 0.75; }
+    50%  { transform: scale(1.04) translateY(-1.5%); opacity: 1; }
+    100% { transform: scale(0.97) translateY(1%);    opacity: 0.85; }
+  }
+
+  /* ── SCROLL PROGRESS ─────────────────────────────────────────────────
+     Hairline reading-progress bar. framer-motion drives scaleX from
+     scrollYProgress; transform-only, so it never causes layout. */
+  .scroll-progress {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 2px;
+    z-index: 50;
+    transform-origin: 0 50%;
+    background: linear-gradient(to right, var(--text-accent), var(--text-accent-soft));
+    pointer-events: none;
   }
 
   /* ── TILT SURFACE ────────────────────────────────────────────────────
@@ -754,7 +792,11 @@
     scroll-behavior: auto !important;
   }
   .btn-primary:hover,
+  .btn-primary:active,
   .btn-icon:hover,
+  .btn-icon:active,
+  .btn-icon svg,
+  .nav-link:hover,
   .skill-tag:hover,
   .tilt-card { transform: none !important; }
   .card-sheen, .status-dot__ping { display: none; }

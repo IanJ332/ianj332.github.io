@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback, useRef, lazy, Suspense } from 'react';
-import { motion } from 'framer-motion';
+import { motion, useScroll, useSpring, useTransform } from 'framer-motion';
 import {
     greeting,
     workExperiences,
@@ -38,12 +38,21 @@ const StageFallback = ({ theme }) => (
 const EASE = [0.16, 1, 0.3, 1];
 const VIEWPORT = { once: true, margin: '-60px' };
 
+/* Under-damped spring on the transform (damping ratio ~0.87 → a few px of
+   overshoot, then settle) with a plain tween on opacity — fading should never
+   bounce. */
+const RISE_SPRING = { type: 'spring', stiffness: 150, damping: 19, mass: 0.8 };
+
 const riseIn = {
-    hidden: { opacity: 0, y: 24 },
+    hidden: { opacity: 0, y: 30, scale: 0.98 },
     visible: (i = 0) => ({
         opacity: 1,
         y: 0,
-        transition: { duration: 0.7, delay: i * 0.08, ease: EASE },
+        scale: 1,
+        transition: {
+            opacity: { duration: 0.55, delay: i * 0.08, ease: 'easeOut' },
+            default: { ...RISE_SPRING, delay: i * 0.08 },
+        },
     }),
 };
 
@@ -187,6 +196,14 @@ const SectionHeading = ({ number, label, align = 'left' }) => (
     </motion.div>
 );
 
+/* Hairline reading-progress bar under the nav. The raw progress value is fed
+   through a spring so fast flicks land with a hint of glide. */
+const ScrollProgress = () => {
+    const { scrollYProgress } = useScroll();
+    const scaleX = useSpring(scrollYProgress, { stiffness: 160, damping: 28, mass: 0.4 });
+    return <motion.div className="scroll-progress" style={{ scaleX }} aria-hidden="true" />;
+};
+
 /* ═══════════════════════════════════════════════════════════
    NAVIGATION — floating pill
    ═══════════════════════════════════════════════════════════ */
@@ -297,28 +314,44 @@ const TerminalIdentityPanel = ({ stars }) => (
 /* ═══════════════════════════════════════════════════════════
    01 — HERO
    ═══════════════════════════════════════════════════════════ */
-const HeroSection = ({ stars }) => (
+const HeroSection = ({ stars }) => {
+    /* Backdrop parallax: the watermark scrolls at ~80% of page speed and
+       dissolves before the next section arrives, which separates it from the
+       foreground panels as real depth. Scroll-linked style values, not
+       animations — zero per-frame React work. */
+    const { scrollY } = useScroll();
+    const backdropY = useTransform(scrollY, [0, 700], [0, 140]);
+    const backdropOpacity = useTransform(scrollY, [0, 520], [1, 0]);
+
+    return (
     <section id="about" className="min-h-svh relative flex flex-col justify-end pb-14 pt-32">
         <motion.div
             className="absolute top-[18vh] left-6 md:left-12 pointer-events-none select-none"
-            initial={{ opacity: 0, y: 40 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 1.3, ease: EASE }}
+            style={{ y: backdropY, opacity: backdropOpacity }}
         >
-            <h1 className="text-display text-[length:var(--fs-hero)] text-[var(--text-main)] opacity-[0.06] leading-[0.86]">
-                Software
-                <br />
-                Engineer
-            </h1>
+            <motion.div
+                initial={{ opacity: 0, y: 40 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 1.3, ease: EASE }}
+            >
+                <h1 className="text-display text-[length:var(--fs-hero)] text-[var(--text-main)] opacity-[0.06] leading-[0.86]">
+                    Software
+                    <br />
+                    Engineer
+                </h1>
+            </motion.div>
         </motion.div>
 
         <div className="container mx-auto px-6 md:px-12 relative">
             <div className="flex flex-col lg:flex-row items-end justify-between gap-8">
                 <motion.div
                     className="w-full max-w-md lg:w-auto"
-                    initial={{ opacity: 0, y: 36 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.9, delay: 0.15, ease: EASE }}
+                    initial={{ opacity: 0, x: -36, y: 24 }}
+                    animate={{ opacity: 1, x: 0, y: 0 }}
+                    transition={{
+                        opacity: { duration: 0.7, delay: 0.15, ease: 'easeOut' },
+                        default: { type: 'spring', stiffness: 110, damping: 17, mass: 0.9, delay: 0.15 },
+                    }}
                 >
                     <TiltCard className="glass-panel glass-panel-solid p-7 md:p-8" max={5}>
                         <div className="eyebrow mb-5">
@@ -372,9 +405,12 @@ const HeroSection = ({ stars }) => (
 
                 <motion.div
                     className="hidden lg:block"
-                    initial={{ opacity: 0, y: 36 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.9, delay: 0.32, ease: EASE }}
+                    initial={{ opacity: 0, x: 36, y: 24 }}
+                    animate={{ opacity: 1, x: 0, y: 0 }}
+                    transition={{
+                        opacity: { duration: 0.7, delay: 0.32, ease: 'easeOut' },
+                        default: { type: 'spring', stiffness: 110, damping: 17, mass: 0.9, delay: 0.32 },
+                    }}
                 >
                     <TerminalIdentityPanel stars={stars} />
                 </motion.div>
@@ -393,7 +429,8 @@ const HeroSection = ({ stars }) => (
             </motion.div>
         </div>
     </section>
-);
+    );
+};
 
 /* ═══════════════════════════════════════════════════════════
    02 — TRAJECTORY
@@ -718,6 +755,7 @@ const App = () => {
 
             <FloatingBadges currentSection={currentSection} />
 
+            <ScrollProgress />
             <Navbar theme={theme} toggleTheme={toggleTheme} currentSection={currentSection} />
 
             {/* z-10 keeps content above the WebGL stage. Critically, <main> has

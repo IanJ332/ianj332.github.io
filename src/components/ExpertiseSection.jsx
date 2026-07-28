@@ -16,12 +16,20 @@ const categoryConfig = {
 
 const FALLBACK = { icon: Cpu, accent: '#6366f1' };
 
+/* Left column slides in from the left, right column from the right, on an
+   under-damped spring — the two lanes converging is the section's entrance
+   signature. Opacity stays a tween; fades should not bounce. */
 const cardVariants = {
-    hidden: { opacity: 0, y: 24 },
+    hidden: (i) => ({ opacity: 0, y: 26, x: i % 2 === 0 ? -24 : 24, scale: 0.98 }),
     visible: (i) => ({
         opacity: 1,
         y: 0,
-        transition: { duration: 0.65, delay: i * 0.09, ease: EASE },
+        x: 0,
+        scale: 1,
+        transition: {
+            opacity: { duration: 0.5, delay: i * 0.09, ease: 'easeOut' },
+            default: { type: 'spring', stiffness: 140, damping: 18, mass: 0.85, delay: i * 0.09 },
+        },
     }),
 };
 

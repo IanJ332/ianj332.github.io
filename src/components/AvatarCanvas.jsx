@@ -508,6 +508,11 @@ const AvatarModel = ({ pointer, scrollVelocity, currentSection, reducedMotion })
        mechanical left-to-right "jump". */
     const spring = useRef({ ry: 0, rx: 0, rz: 0, vy: 0, vx: 0, vz: 0 });
     const posSpring = useRef({ x: 0, y: 1.1, vx: 0, vy: 0 });
+    /* Entrance ramp, 0 → 1 after the GLB resolves. Drives a rise-from-below
+       offset, a scale bloom and a one-shot rim flare so the model's arrival
+       is choreography rather than a pop-in (a 10 MB stream WILL arrive late
+       on some connections — the entrance makes that moment look intended). */
+    const intro = useRef(0);
     /* Eyes run a stiffer, lighter spring than the head so the gaze arrives
        first and the head follows — which is how people actually look at
        things, and what stops the two motions reading as one rigid unit. */
@@ -585,8 +590,15 @@ const AvatarModel = ({ pointer, scrollVelocity, currentSection, reducedMotion })
         const halfH = Math.tan((camera.fov / 2) * DEG2RAD) * Math.abs(camera.position.z);
         const halfW = halfH * camera.aspect;
 
-        const targetScale = pose.fill * (halfH * 2);
-        const targetTopY = halfH - pose.topMargin * (halfH * 2);
+        /* Entrance: ease toward 1 with a damp — reduced-motion users get the
+           finished pose immediately. */
+        intro.current = reducedMotion ? 1 : THREE.MathUtils.damp(intro.current, 1, 1.6, delta);
+        const introK = intro.current;
+        // smoothstep so both ends of the ramp are velocity-continuous
+        const introE = introK * introK * (3 - 2 * introK);
+
+        const targetScale = pose.fill * (halfH * 2) * (0.9 + 0.1 * introE);
+        const targetTopY = halfH - pose.topMargin * (halfH * 2) - (1 - introE) * halfH * 0.55;
         const targetX = pose.x * halfW;
 
         const mx = pointer.current.x;
@@ -625,7 +637,8 @@ const AvatarModel = ({ pointer, scrollVelocity, currentSection, reducedMotion })
 
         /* ── Spring-damped orientation ──────────────────────────────────── */
         const s = spring.current;
-        const targetRY = pose.rotY + (reducedMotion ? 0 : mx * 0.24);
+        // (1 - introE) adds an opening quarter-turn that the spring unwinds.
+        const targetRY = pose.rotY + (reducedMotion ? 0 : mx * 0.24) + (1 - introE) * 0.4;
         // Pitch = cursor tilt + a forward/back lean into the scroll direction.
         const targetRX = reducedMotion ? 0 : my * 0.11 + sv * 0.13;
         // Roll = counter-rotation against the scroll, like a body being carried.
@@ -699,9 +712,12 @@ const AvatarModel = ({ pointer, scrollVelocity, currentSection, reducedMotion })
         uniforms.uLightDir.value.lerp(lightDir, 1 - Math.exp(-6 * delta));
         uniforms.uRimColor.value.lerp(tmpColor.set(pose.rim), 1 - Math.exp(-3 * delta));
         uniforms.uTint.value.lerp(tmpColor.set(pose.tint), 1 - Math.exp(-3 * delta));
+        // The entrance flare: rim runs hot while introE < 1, then settles to
+        // the section value — reads as stage lighting swinging onto the
+        // subject as it arrives.
         uniforms.uRimAmount.value = THREE.MathUtils.damp(
             uniforms.uRimAmount.value,
-            pose.rimAmount * pose.opacity,
+            pose.rimAmount * pose.opacity * (1 + (1 - introE) * 1.2),
             3,
             delta
         );
@@ -825,16 +841,25 @@ const FullscreenAvatarCanvasInner = ({ currentSection, theme }) => {
             {/* Cursor-tracking ambient light */}
             <div ref={glowRef} className="cursor-glow" />
 
-            {/* Static centre bloom */}
-            <div
-                className="absolute top-1/3 left-1/2 -translate-x-1/2 -translate-y-1/3 w-[70vw] h-[70vw] max-w-[900px] max-h-[900px] rounded-full transition-opacity duration-700"
-                style={{
-                    background: isDark
-                        ? 'radial-gradient(circle, rgba(99,102,241,0.14) 0%, transparent 70%)'
-                        : 'radial-gradient(circle, rgba(251,191,36,0.12) 0%, transparent 70%)',
-                }}
-            />
+            {/* Centre bloom — the inner child carries a slow breathing sweep
+                (scale + opacity keyframes) so the animation cannot clobber the
+                outer element's centering translate. */}
+            <div className="absolute top-1/3 left-1/2 -translate-x-1/2 -translate-y-1/3 w-[70vw] h-[70vw] max-w-[900px] max-h-[900px]">
+                <div
+                    className="bloom-breathe w-full h-full rounded-full transition-opacity duration-700"
+                    style={{
+                        background: isDark
+                            ? 'radial-gradient(circle, rgba(99,102,241,0.14) 0%, transparent 70%)'
+                            : 'radial-gradient(circle, rgba(251,191,36,0.12) 0%, transparent 70%)',
+                    }}
+                />
+            </div>
 
+            {/* The boundary wraps ONLY the Canvas: if WebGL context creation or
+                the GLB load throws, the ambient stage above keeps rendering and
+                the page still reads as designed — previously the whole stage
+                (wash, grid, glow) vanished with it. */}
+            <CanvasErrorBoundary>
             <Canvas
                 camera={{ position: [0, 0, CAM_Z], fov: CAM_FOV, near: 0.1, far: 40 }}
                 className="avatar-canvas"
@@ -895,14 +920,13 @@ const FullscreenAvatarCanvasInner = ({ currentSection, theme }) => {
                     <ToneMapping mode={ToneMappingMode.ACES_FILMIC} />
                 </EffectComposer>
             </Canvas>
+            </CanvasErrorBoundary>
         </div>
     );
 };
 
 const FullscreenAvatarCanvas = ({ currentSection = 'about', theme = 'dark' }) => (
-    <CanvasErrorBoundary>
-        <FullscreenAvatarCanvasInner currentSection={currentSection} theme={theme} />
-    </CanvasErrorBoundary>
+    <FullscreenAvatarCanvasInner currentSection={currentSection} theme={theme} />
 );
 
 export default FullscreenAvatarCanvas;

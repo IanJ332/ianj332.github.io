@@ -25,6 +25,10 @@
       });
     }
   </script>
+  <!-- The 10 MB avatar GLB is the page's real long pole. Without this hint it
+       only starts downloading after the lazy WebGL chunk has been fetched,
+       parsed and executed — this starts the stream at t=0 instead. -->
+  <link rel="preload" href="/models/avatar.glb" as="fetch" type="model/gltf-binary" crossorigin>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="preload" href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300..700&display=swap" as="style">
