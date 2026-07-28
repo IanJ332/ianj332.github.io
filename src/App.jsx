@@ -306,7 +306,7 @@ const HeroSection = ({ stars }) => (
             transition={{ duration: 1.3, ease: EASE }}
         >
             <h1 className="text-display text-[length:var(--fs-hero)] text-[var(--text-main)] opacity-[0.06] leading-[0.86]">
-                ML
+                Software
                 <br />
                 Engineer
             </h1>

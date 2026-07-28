@@ -261,6 +261,15 @@
     background: var(--bg-glass-strong);
   }
 
+  /* Opt-in: on hover the panel border tints toward the card's own accent
+     (set inline as --card-accent). Must sit after .glass-panel:hover so the
+     equal-specificity rule wins by order. */
+  .accent-hover:hover {
+    border-color: color-mix(in srgb, var(--card-accent) 45%, transparent);
+    box-shadow: var(--shadow-panel-hover), var(--highlight-inset),
+                0 0 0 3px color-mix(in srgb, var(--card-accent) 8%, transparent);
+  }
+
   /* ── NAVIGATION ──────────────────────────────────────────────────────
      A contained pill rather than a full-bleed bar: a 100vw blurred strip
      was cutting a hard horizontal band straight across the avatar's face
@@ -589,6 +598,13 @@
   }
 
   /* ── FLOATING BADGE ──────────────────────────────────────────────── */
+  /* Every badge wrapper carries a framer transform, so each is its own
+     stacking context and DOM order decides who paints on top. Without the
+     hover bump, an earlier badge's expanded popover slides UNDER a later
+     badge's chip. */
+  .badge-wrap { z-index: 1; }
+  .badge-wrap:hover { z-index: 10; }
+
   .badge-chip {
     position: relative;
     display: inline-flex;
@@ -647,6 +663,10 @@
     bottom: calc(100% + 0.5rem);
     transform-origin: bottom left;
     transform: translateY(6px) scale(0.97);
+  }
+
+  .badge-chip.items-end.badge-up .badge-detail {
+    transform-origin: bottom right;
   }
 
   .badge-chip:hover .badge-detail {

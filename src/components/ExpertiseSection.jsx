@@ -71,8 +71,15 @@ const ExpertiseSection = () => (
                                 {/* Inner TiltCard owns the transform — framer's
                                     settled inline transform on the outer element
                                     would otherwise fight a live tilt. */}
-                                <TiltCard className="glass-panel p-5 md:p-6 h-full flex flex-col" max={7}>
-                                    <div className="flex items-center gap-3 mb-1.5">
+                                {/* Content flows top-down with NO mt-auto on the tag row:
+                                    equal-height grid cards + bottom-anchored tags opened a
+                                    hole of whitespace mid-card under the shorter headers. */}
+                                <TiltCard
+                                    className="glass-panel accent-hover p-5 md:p-6 h-full flex flex-col"
+                                    max={7}
+                                    style={{ '--card-accent': config.accent }}
+                                >
+                                    <div className="flex items-center gap-3 mb-3">
                                         <span
                                             className="w-8 h-8 rounded-lg flex items-center justify-center shrink-0 border"
                                             style={{
@@ -82,16 +89,16 @@ const ExpertiseSection = () => (
                                         >
                                             <Icon size={15} style={{ color: config.accent }} />
                                         </span>
-                                        <h3 className="text-display-light text-[14.5px] text-[var(--text-main)]">
+                                        <h3 className="text-display-light text-[14.5px] text-[var(--text-main)] leading-snug">
                                             {group.category}
                                         </h3>
                                     </div>
 
-                                    <p className="text-body text-[12px] text-[var(--text-faint)] mb-5 leading-[1.6]">
+                                    <p className="text-body text-[12px] text-[var(--text-faint)] mb-4 leading-[1.6] border-b border-[var(--border-dim)] pb-4">
                                         {group.description}
                                     </p>
 
-                                    <div className="flex flex-wrap gap-1.5 mt-auto">
+                                    <div className="flex flex-wrap gap-1.5">
                                         {group.skills.map((skill, i) => {
                                             const name = typeof skill === 'string' ? skill : skill.name;
                                             return (

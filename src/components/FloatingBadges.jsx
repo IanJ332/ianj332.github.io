@@ -12,7 +12,7 @@ const badges = [
         icon: Cpu,
         accent: '#6366f1',
         status: 'building',
-        position: { top: '20%', left: '5%' },
+        position: { top: '19%', left: '4.5%' },
         delay: 0,
     },
     {
@@ -21,9 +21,12 @@ const badges = [
         icon: Brain,
         accent: '#059669',
         status: 'active',
-        position: { top: '31%', right: '5%' },
+        position: { top: '27%', right: '4.5%' },
         delay: 0.28,
         alignRight: true,
+        // Opens upward so its popover can never reach down into the
+        // terminal identity panel on short viewports.
+        openUp: true,
     },
     {
         label: 'LLM Research',
@@ -31,7 +34,9 @@ const badges = [
         icon: FlaskConical,
         accent: '#0891b2',
         status: 'publishing',
-        position: { top: '38%', left: '7%' },
+        // 36% keeps the chip (plus its ±7px float) clear of the hero bio
+        // panel's top edge, which starts at ~42% viewport height.
+        position: { top: '36%', left: '7%' },
         delay: 0.56,
         // Opens upward so its popover can never cover the hero bio panel.
         openUp: true,
@@ -43,7 +48,7 @@ const Badge = ({ badge }) => {
 
     return (
         <motion.div
-            className="absolute pointer-events-auto"
+            className="badge-wrap absolute pointer-events-auto"
             style={badge.position}
             initial={{ opacity: 0, y: 18, scale: 0.9 }}
             animate={{
