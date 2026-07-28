@@ -164,31 +164,53 @@ const RIM_HDR_GAIN = 2.4;
        EYE B  sclera centre px (512.3, 1734.3)  halfspan (15.5, 25.0)
               iris   centre px (511.3, 1718.2)
 
-   Two things to note:
+   Four things to note:
+
    • glTF UV origin is TOP-left and GLTFLoader sets flipY = false, so
      v = py / 2048 directly (NOT 1 - py/2048).
+
    • The two eyes sit at ~90° to each other in the atlas — eye A is wide and
      short, eye B is narrow and tall. A fixed UV-space direction would send
      one iris sideways and the other vertically. The shader therefore derives
      its offset basis from dFdx/dFdy of the UV, i.e. from the actual
      screen→UV mapping, which is correct per-eye AND automatically follows
-     the head as it rotates.
+     the head as it rotates. The basis is Gram-Schmidt orthonormalised, so a
+     skewed UV island cannot shear the gaze into an ellipse.
+
+   • THE DISPLACEMENT MUST NOT BE MULTIPLIED BY THE MASK. Sampling at
+     `uv - shift * mask(uv)` is a spatially varying displacement field, i.e.
+     a WARP with local Jacobian I - d(shift·mask)/duv. Any part of the iris
+     sitting in the mask's falloff gets squashed along the gradient — that is
+     exactly what stretched the pupils into ovals. The shift is now constant
+     per eye, and the mask instead cross-fades between two RIGIDLY sampled
+     lookups. A rigid translation has Jacobian I, so the pupil stays a
+     perfect circle at every offset.
+
+   • uEyeLook = (0,0) reproduces the baked texture BIT-FOR-BIT: eyeShift is
+     zero, so both lookups collapse to the same texel and the mix is a no-op.
+     That is what preserves the model's signature cross-eyed rest pose. Gaze
+     is purely a delta from it, and because both eyes receive the SAME
+     screen-space translation, their relative convergence — the cross-eye — is
+     invariant under tracking.
    ═══════════════════════════════════════════════════════════════════════ */
 const TEX = 2048;
 const px2uv = (x, y) => new THREE.Vector2(x / TEX, y / TEX);
-const span2uv = (x, y) => new THREE.Vector2(x / TEX, y / TEX);
 
-/* Mask sits between the sclera centroid and the iris so the iris always
-   falls inside the full-displacement core (r < 0.55), while the sclera↔lid
-   boundary lands in the feathered edge where displacement decays to zero. */
-const EYE_A_CENTER = px2uv(244.6, 1713.6);
-const EYE_A_RADIUS = span2uv(30, 20);
-const EYE_B_CENTER = px2uv(511.8, 1726.3);
-const EYE_B_RADIUS = span2uv(20, 30);
+/* Masks are CIRCULAR in texel space (the atlas is square, so equal texel
+   radius = equal UV radius). An axis-aligned ellipse would have imposed the
+   sclera's own aspect on the blend and reintroduced directional bias.
+   Centred on each iris at rest, so the iris is always deep inside the core. */
+const EYE_A_IRIS = px2uv(255.4, 1713.5);
+const EYE_B_IRIS = px2uv(511.3, 1718.2);
 
-/* Max iris travel in UV units. 0.0045 ≈ 9 px of a 2048 map ≈ half an iris
-   width — past roughly 0.006 the iris starts to climb onto the eyelid. */
-const EYE_TRAVEL = 0.0045;
+/* Iris radius measured from the dark-pixel count: sqrt(259/pi) ≈ 9.1 texels.
+   CORE must satisfy  core >= irisRadius + travel  so the whole iris disc sits
+   in the flat (mix == 1) region at full deflection — that is the guarantee of
+   a rigid, circle-preserving translation. */
+const EYE_TRAVEL_TEXELS = 8;
+const EYE_CORE_TEXELS = 18; // 9.1 + 8 = 17.1, rounded up
+const EYE_EDGE_TEXELS = 30; // cross-fade band, lands on low-frequency skin
+const EYE_TRAVEL = EYE_TRAVEL_TEXELS / TEX;
 
 const RIM_UNIFORM_DEFAULTS = () => ({
     uRimColor: { value: new THREE.Color('#8b93ff') },
@@ -197,12 +219,14 @@ const RIM_UNIFORM_DEFAULTS = () => ({
     uLightDir: { value: new THREE.Vector3(0, 0, 1) },
     uTint: { value: new THREE.Color('#ffffff') },
     uTintAmount: { value: 0 },
+    // Delta from the baked cross-eyed rest pose, NOT an absolute gaze.
     uEyeLook: { value: new THREE.Vector2(0, 0) },
     uEyeTravel: { value: EYE_TRAVEL },
-    uEyeACenter: { value: EYE_A_CENTER.clone() },
-    uEyeARadius: { value: EYE_A_RADIUS.clone() },
-    uEyeBCenter: { value: EYE_B_CENTER.clone() },
-    uEyeBRadius: { value: EYE_B_RADIUS.clone() },
+    uEyeACenter: { value: EYE_A_IRIS.clone() },
+    uEyeBCenter: { value: EYE_B_IRIS.clone() },
+    uEyeCore: { value: EYE_CORE_TEXELS },
+    uEyeEdge: { value: EYE_EDGE_TEXELS },
+    uTexSize: { value: TEX },
 });
 
 const injectRimShader = (material, uniforms, lit) => {
@@ -226,27 +250,37 @@ const injectRimShader = (material, uniforms, lit) => {
 
     const EYE_BLOCK = `#ifdef ${albedoDefine}
 
-                     // Screen→UV basis. dFdx/dFdy give how UV changes per pixel
-                     // of screen x/y, so normalising them yields the UV direction
-                     // of "screen right" and "screen up" AT THIS FRAGMENT —
-                     // independent of how the atlas rotated this island, and
-                     // re-derived every frame as the head turns.
+                     // ── Orthonormal screen→UV basis (the mapping matrix) ──
+                     // dFdx/dFdy give how UV changes per pixel of screen x/y.
+                     // Gram-Schmidt makes the pair orthonormal so a unit gaze
+                     // vector produces the SAME texel displacement in every
+                     // direction: no anisotropy, no shear.
                      vec2 duvdx = dFdx( ${albedoUv} );
                      vec2 duvdy = dFdy( ${albedoUv} );
-                     vec2 axisX = normalize( duvdx + vec2( 1e-8 ) );
-                     vec2 axisY = normalize( duvdy + vec2( 1e-8 ) );
+                     vec2 axisX = duvdx / max( length( duvdx ), 1e-8 );
+                     vec2 perpY = duvdy - axisX * dot( duvdy, axisX );
+                     vec2 axisY = length( perpY ) > 1e-7
+                         ? normalize( perpY )
+                         : vec2( -axisX.y, axisX.x );
+
+                     // CONSTANT per fragment — deliberately NOT scaled by the
+                     // mask. See the header: a mask-scaled shift is a warp and
+                     // ovals the pupil.
+                     vec2 eyeShift = ( uEyeLook.x * axisX + uEyeLook.y * axisY )
+                                     * uEyeTravel;
 
                      float eyeInfluence = max(
-                         eyeMask( ${albedoUv}, uEyeACenter, uEyeARadius ),
-                         eyeMask( ${albedoUv}, uEyeBCenter, uEyeBRadius )
+                         eyeMask( ${albedoUv}, uEyeACenter ),
+                         eyeMask( ${albedoUv}, uEyeBCenter )
                      );
 
-                     // Sample AGAINST the look direction: pulling the lookup
-                     // upstream slides the painted iris downstream.
-                     vec2 eyeShift = ( uEyeLook.x * axisX + uEyeLook.y * axisY )
-                                     * uEyeTravel * eyeInfluence;
-
-                     vec4 sampledAlbedo = texture2D( ${albedoSampler}, ${albedoUv} - eyeShift );
+                     // Two RIGID lookups, cross-faded. Inside the core the
+                     // result is a pure translation (Jacobian = I, circle
+                     // preserved); the blend happens out on featureless skin.
+                     // At uEyeLook = 0 both fetches coincide -> baked pose.
+                     vec4 albedoRest = texture2D( ${albedoSampler}, ${albedoUv} );
+                     vec4 albedoLook = texture2D( ${albedoSampler}, ${albedoUv} - eyeShift );
+                     vec4 sampledAlbedo = mix( albedoRest, albedoLook, eyeInfluence );
                      ${albedoApply}
 
                  #endif`;
@@ -288,13 +322,16 @@ const injectRimShader = (material, uniforms, lit) => {
                  uniform vec2  uEyeLook;
                  uniform float uEyeTravel;
                  uniform vec2  uEyeACenter;
-                 uniform vec2  uEyeARadius;
                  uniform vec2  uEyeBCenter;
-                 uniform vec2  uEyeBRadius;
+                 uniform float uEyeCore;
+                 uniform float uEyeEdge;
+                 uniform float uTexSize;
 
-                 // Soft elliptical falloff: 1.0 in the core, 0.0 past the rim.
-                 float eyeMask( vec2 uv, vec2 c, vec2 r ) {
-                     return 1.0 - smoothstep( 0.55, 1.0, length( ( uv - c ) / r ) );
+                 // Isotropic falloff measured in TEXELS: 1.0 inside the core,
+                 // 0.0 past the edge. Circular by construction — no aspect bias.
+                 float eyeMask( vec2 uv, vec2 c ) {
+                     float d = length( ( uv - c ) * uTexSize );
+                     return 1.0 - smoothstep( uEyeCore, uEyeEdge, d );
                  }`
         );
 
@@ -309,7 +346,7 @@ const injectRimShader = (material, uniforms, lit) => {
 
         shader.fragmentShader = frag;
     };
-    material.customProgramCacheKey = () => `avatar-rim-eyes-v3-${lit ? 'pbr' : 'shaded'}`;
+    material.customProgramCacheKey = () => `avatar-rim-eyes-v4-${lit ? 'pbr' : 'shaded'}`;
     material.needsUpdate = true;
 };
 
