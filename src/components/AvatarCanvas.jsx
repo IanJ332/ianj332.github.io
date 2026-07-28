@@ -205,7 +205,21 @@ const EYE_B_CENTER = px2uv(511.5, 1727.5);
 const EYE_B_ELLIPSE = ellipse(90.0, 37.5, 15.5);
 const EYE_B_IRIS = px2uv(511.0, 1703.0);
 
-const EYE_IRIS_RADIUS = 14.0; // texels
+/* DRAWN iris radius. Deliberately larger than the 14-texel disc that is baked
+   into the map: at 14 the iris covers only ~38% of the 74-texel aperture,
+   which reads as pin-eyed and startled. 24 fills the opening the way a
+   cartoon-hero eye does, and makes the gaze direction legible at a glance —
+   at 14 it was hard to tell which way the eyes were pointing at all.
+   ONE uniform feeds both eyes, so the two drawn radii are identical by
+   construction; they can only differ by the UV foreshortening of the head
+   itself, which is correct. */
+const EYE_IRIS_RADIUS = 24.0;
+
+/* The radius of the iris actually PAINTED IN THE TEXTURE. This is a separate
+   number from the drawn radius and must stay at the measured value: it sizes
+   the disc that erases the baked iris. Scaling it with the drawn radius would
+   push that erase-disc out over the eyelid and paint sclera onto skin. */
+const BAKED_IRIS_RADIUS = 14.0;
 
 /* Linear-space means straight out of the diffuse map. */
 const SCLERA_COLOR = new THREE.Color(0.78, 0.645, 0.565);
@@ -227,7 +241,7 @@ const EYE_DECOUPLE_MAX = 0.9;
    under the lid at full deflection — a real eye does exactly that, and the
    aperture mask does the clipping for free. Vertical is inherently tighter,
    which is also how real eyes move. */
-const EYE_TRAVEL = new THREE.Vector2(14, 6);
+const EYE_TRAVEL = new THREE.Vector2(13, 5);
 
 /* Normalised aperture units: 1.0 is the eyelid rim. The composite reaches
    almost to the rim so the baked iris (whose outer edge sits at ~0.95) is
@@ -259,6 +273,7 @@ const RIM_UNIFORM_DEFAULTS = () => ({
     uEyeCore: { value: EYE_CORE },
     uEyeEdge: { value: EYE_EDGE },
     uIrisRadius: { value: EYE_IRIS_RADIUS },
+    uBakedIrisRadius: { value: BAKED_IRIS_RADIUS },
     uTexSize: { value: TEX },
     uScleraColor: { value: new THREE.Color().copy(SCLERA_COLOR) },
     uIrisColor: { value: new THREE.Color().copy(IRIS_COLOR) },
@@ -369,6 +384,7 @@ const injectRimShader = (material, uniforms, lit) => {
                  uniform float uEyeCore;
                  uniform float uEyeEdge;
                  uniform float uIrisRadius;
+                 uniform float uBakedIrisRadius;
                  uniform float uTexSize;
                  uniform vec3  uScleraColor;
                  uniform vec3  uIrisColor;
@@ -429,7 +445,7 @@ const injectRimShader = (material, uniforms, lit) => {
                      // off there. Without the aperture term the guard preserves
                      // those stains too, and they reappear as dark specks
                      // floating in the clean sclera.
-                     float bakedIris = 1.0 - smoothstep( uIrisRadius * 1.02, uIrisRadius * 1.45,
+                     float bakedIris = 1.0 - smoothstep( uBakedIrisRadius * 1.02, uBakedIrisRadius * 1.45,
                                                          length( pTex - irisRestTex ) );
                      float interior = 1.0 - smoothstep( 0.55, 0.85, n );
                      float lidGuard = max( smoothstep( 0.05, 0.16, restLum ),
@@ -442,7 +458,7 @@ const injectRimShader = (material, uniforms, lit) => {
                      // Union the aperture with a disc over the baked iris so it
                      // is always fully erased.
                      float aperture = 1.0 - smoothstep( uEyeCore, uEyeEdge, n );
-                     float bakedCover = 1.0 - smoothstep( uIrisRadius * 1.10, uIrisRadius * 1.45,
+                     float bakedCover = 1.0 - smoothstep( uBakedIrisRadius * 1.10, uBakedIrisRadius * 1.45,
                                                           length( pTex - irisRestTex ) );
                      mask = max( aperture, bakedCover ) * lidGuard * uEyeProcedural;
                      return col;
@@ -460,7 +476,7 @@ const injectRimShader = (material, uniforms, lit) => {
 
         shader.fragmentShader = frag;
     };
-    material.customProgramCacheKey = () => `avatar-eye-procedural-v8-${lit ? 'pbr' : 'shaded'}`;
+    material.customProgramCacheKey = () => `avatar-eye-procedural-v9-${lit ? 'pbr' : 'shaded'}`;
     material.needsUpdate = true;
 };
 
@@ -644,7 +660,7 @@ const AvatarModel = ({ pointer, scrollVelocity, currentSection, reducedMotion })
            only near its sclera edge when decouple is small, and only fully
            decoupled when it has the whole sclera to move across. */
         const gazeMag = Math.min(1, Math.hypot(eye.x, eye.y));
-        const k = THREE.MathUtils.clamp((gazeMag - 0.06) / 0.49, 0, 1);
+        const k = THREE.MathUtils.clamp((gazeMag - 0.03) / 0.28, 0, 1);
         const decoupleTarget = reducedMotion ? 0 : k * k * (3 - 2 * k) * EYE_DECOUPLE_MAX;
         uniforms.uEyeDecouple.value = THREE.MathUtils.damp(
             uniforms.uEyeDecouple.value,
