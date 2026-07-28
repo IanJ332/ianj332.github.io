@@ -146,129 +146,95 @@ class CanvasErrorBoundary extends Component {
 const RIM_HDR_GAIN = 2.4;
 
 /* ═══════════════════════════════════════════════════════════════════════
-   PROCEDURAL EYE TRACKING
+   PROCEDURAL EYE
    ───────────────────────────────────────────────────────────────────────
    The mesh has no eye submesh, no bone and no morph target, so the eyes
-   cannot be rotated. What the asset DOES have is a lucky UV layout: both
-   eyes land in a single contiguous island in the lower-left of the 2048²
-   atlas, and the irises are painted onto a flat-ish surface (photogrammetry
-   does not model an eyeball as a sphere). So the iris can be MOVED ACROSS
-   THE SCLERA by offsetting the texture lookup inside a soft elliptical mask.
+   cannot be rotated. Earlier builds moved the iris by displacing the texture
+   lookup, but that can only ever REARRANGE baked pixels: as the iris slid
+   away it uncovered the baked iris outline and the shadow the artist painted
+   under it, leaving dark stains and jagged edges on the sclera.
 
-   Values below were measured, not guessed: sclera pixels were isolated in
-   the diffuse map by (value > 0.80 && saturation < 0.20), clustered into two
-   groups, and the iris located as the dark core inside each cluster.
+   So the eye is now SYNTHESISED. Inside the aperture the texture is replaced
+   by a two-layer composite — a clean sclera base, then a procedurally drawn
+   circular iris at the tracked position. Nothing is uncovered because nothing
+   is moved; every pixel inside the aperture is generated.
 
-       EYE A  sclera centre px (233.7, 1713.7)  halfspan (26.5, 18.0)
-              iris   centre px (255.4, 1713.5)
-       EYE B  sclera centre px (512.3, 1734.3)  halfspan (15.5, 25.0)
-              iris   centre px (511.3, 1718.2)
+   Everything below was measured from the diffuse map, not guessed. Sclera
+   pixels were isolated by (value > 0.80 && saturation < 0.20), the iris as
+   the dark core inside that cluster, and the aperture (sclera ∪ iris) fitted
+   with a covariance ellipse — a ROTATED fit, because the eye opening is an
+   almond and the two islands sit ~90° apart in the atlas:
 
-   Four things to note:
+       A  centre (235.5, 1715.0)  semi-axes (37.0, 18.0)  angle -16°
+          iris   (259.0, 1713.0)  radius 14
+       B  centre (511.5, 1727.5)  semi-axes (37.5, 15.5)  angle  90°
+          iris   (511.0, 1703.0)  radius 14
 
-   • glTF UV origin is TOP-left and GLTFLoader sets flipY = false, so
-     v = py / 2048 directly (NOT 1 - py/2048).
+   An automated covariance fit was tried first and got both wrong: the sclera
+   threshold missed the iris (a brown iris is not "bright desaturated"), so the
+   ellipse was pulled off-centre, and a luminance threshold for the iris kept
+   swallowing the eyelash line. These numbers were read off a texel-gridded
+   render of each eye instead, then checked by overlaying the fitted ellipse
+   and iris circle back onto the texture.
 
-   • The two eyes sit at ~90° to each other in the atlas — eye A is wide and
-     short, eye B is narrow and tall. A fixed UV-space direction would send
-     one iris sideways and the other vertically. The shader therefore derives
-     its offset basis from dFdx/dFdy of the UV, i.e. from the actual
-     screen→UV mapping, which is correct per-eye AND automatically follows
-     the head as it rotates. The basis is Gram-Schmidt orthonormalised, so a
-     skewed UV island cannot shear the gaze into an ellipse.
+   Colours are sampled means in LINEAR space (the map is decoded as sRGB
+   before the shader sees it). The sclera is a warm off-white, not #f8f8f8 —
+   painting it pure white would have made the eyes glow against the baked
+   lighting of the rest of the face.
 
-   • THE DISPLACEMENT MUST NOT BE MULTIPLIED BY THE MASK. Sampling at
-     `uv - shift * mask(uv)` is a spatially varying displacement field, i.e.
-     a WARP with local Jacobian I - d(shift·mask)/duv. Any part of the iris
-     sitting in the mask's falloff gets squashed along the gradient — that is
-     exactly what stretched the pupils into ovals. The shift is now constant
-     per eye, and the mask instead cross-fades between two RIGIDLY sampled
-     lookups. A rigid translation has Jacobian I, so the pupil stays a
-     perfect circle at every offset.
-
-   • uEyeLook = (0,0) reproduces the baked texture BIT-FOR-BIT: eyeShift is
-     zero, so both lookups collapse to the same texel and the mix is a no-op.
-     That is what preserves the model's signature cross-eyed rest pose. Gaze
-     is purely a delta from it, and because both eyes receive the SAME
-     screen-space translation, their relative convergence — the cross-eye — is
-     invariant under tracking.
+   glTF UV origin is TOP-left and GLTFLoader sets flipY = false, so
+   v = py / 2048 directly (NOT 1 - py/2048).
    ═══════════════════════════════════════════════════════════════════════ */
 const TEX = 2048;
 const px2uv = (x, y) => new THREE.Vector2(x / TEX, y / TEX);
 
-/* Masks are CIRCULAR in texel space (the atlas is square, so equal texel
-   radius = equal UV radius). An axis-aligned ellipse would have imposed the
-   sclera's own aspect on the blend and reintroduced directional bias. */
-const EYE_A_IRIS = px2uv(255.4, 1713.5);
-const EYE_B_IRIS = px2uv(511.3, 1718.2);
-/* APERTURE = sclera ∪ iris, i.e. the whole visible eye opening. The mask is
-   fitted to THIS, not to the sclera alone, and it is STATIC. Both matter:
+/* Packs (rotation, semi-axes) into the 2x2 that maps a texel-space delta into
+   normalised aperture space, so `length(M * d)` is 1.0 exactly on the rim. */
+const ellipse = (deg, a, b) => {
+    const t = (deg * Math.PI) / 180;
+    const c = Math.cos(t);
+    const s = Math.sin(t);
+    return new THREE.Vector4(c / a, s / a, -s / b, c / b);
+};
 
-   • Static, because the mask has to cover the iris's ORIGINAL position as
-     well as its displaced one. A mask that rides along with the iris stops
-     covering where the iris came from, so the baked pupil is never erased and
-     you get two pupils. (Tried it; that is exactly what happened.)
-   • Aperture-fitted, because the falloff then lands precisely on the eyelid
-     rim. Inside the core everything is the near-uniform white of the sclera,
-     so translating it is invisible — only the iris visibly moves, and the lid
-     never drags.
+const EYE_A_CENTER = px2uv(235.5, 1715.0);
+const EYE_A_ELLIPSE = ellipse(-16.0, 37.0, 18.0);
+const EYE_A_IRIS = px2uv(259.0, 1713.0);
 
-   A  aperture x[209,264] y[1696,1732]  centre (236.5,1714.0) half (27.5,18.0)
-   B  aperture x[496,527] y[1708,1758]  centre (511.5,1733.0) half (15.5,25.0) */
-const EYE_A_CENTER = px2uv(236.5, 1714.0);
-const EYE_A_RADIUS = px2uv(27.5, 18.0);
-const EYE_B_CENTER = px2uv(511.5, 1733.0);
-const EYE_B_RADIUS = px2uv(15.5, 25.0);
+const EYE_B_CENTER = px2uv(511.5, 1727.5);
+const EYE_B_ELLIPSE = ellipse(90.0, 37.5, 15.5);
+const EYE_B_IRIS = px2uv(511.0, 1703.0);
+
+const EYE_IRIS_RADIUS = 14.0; // texels
+
+/* Linear-space means straight out of the diffuse map. */
+const SCLERA_COLOR = new THREE.Color(0.78, 0.645, 0.565);
+const IRIS_COLOR = new THREE.Color(0.04, 0.019, 0.012);
+const PUPIL_COLOR = new THREE.Color(0.01, 0.005, 0.0035);
 
 /* ── DECOUPLING (cross-eyed → parallel) ───────────────────────────────────
-   At rest each iris is painted off-centre INSIDE its own sclera, toward the
-   nose — that offset IS the cross-eye. Sliding it back onto the sclera
-   centroid de-converges that eye. The vector is per-eye and lives in UV
-   space, because it describes the face's own anatomy and must therefore stay
-   welded to the face as the head turns. Gaze, by contrast, is screen-space.
-   Keeping the two in different spaces is what makes the blend behave.
+   At rest each iris is painted off-centre inside its own aperture, toward the
+   nose — that offset IS the cross-eye. The drawn iris simply lerps from its
+   baked position to (aperture centre + gaze), so uEyeDecouple = 0 reproduces
+   the signature pose and 1 gives conjugate parallel gaze. Because both eyes
+   then share one screen-space gaze vector, they stay parallel. */
+const EYE_DECOUPLE_MAX = 0.9;
 
-       A: aperture - iris = (-18.9, +0.5) texels   (almost pure -u)
-       B: aperture - iris = ( +0.2, +14.8) texels  (almost pure +v)
+/* ── TRAVEL BUDGET (texels) ──────────────────────────────────────────────
+   The major axes are ~90° apart in UV but both align with SCREEN-x, so
+   screen-x rides the long axis (semi 37) and screen-y the short one (16-18).
+   With an iris of radius 14 the disc is deliberately allowed to clip slightly
+   under the lid at full deflection — a real eye does exactly that, and the
+   aperture mask does the clipping for free. Vertical is inherently tighter,
+   which is also how real eyes move. */
+const EYE_TRAVEL = new THREE.Vector2(14, 6);
 
-   They point opposite ways in SCREEN space (both eyes swing outward) even
-   though they look unrelated in UV — the two islands sit ~90 deg apart. */
-const EYE_A_DECOUPLE = new THREE.Vector2().subVectors(EYE_A_CENTER, EYE_A_IRIS);
-const EYE_B_DECOUPLE = new THREE.Vector2().subVectors(EYE_B_CENTER, EYE_B_IRIS);
-/* Not 1.0: fully centred irises read as a blank doll stare. */
-const EYE_DECOUPLE_MAX = 0.85;
-
-/* ── TRAVEL BUDGET ───────────────────────────────────────────────────────
-   From a centred iris, travel is limited by  halfspan - irisRadius(9):
-
-       A  half (27.5, 18.0) -> +/-18.5 along u, +/- 9.0 along v
-       B  half (15.5, 25.0) -> +/- 6.5 along u, +/-16.0 along v
-
-   Screen-x drives A.u and B.v -> min(18.5, 16.0) = 16 texels
-   Screen-y drives A.v and B.u -> min( 9.0,  6.5) =  6 texels
-
-   Held a little under those so the iris stays inside the mask CORE rather
-   than merely inside the aperture, including on a full diagonal. Vertical is
-   inherently tighter — which is also how real eyes move.
-
-   Perceived range is far larger than the gaze term alone: from the resting
-   cross-eyed pose an eye first de-converges (~16 texels for A) and THEN gazes
-   (12), so total excursion reaches ~28 texels against 8 in the previous
-   build — about 3.5x. */
-const EYE_TRAVEL_X_TEXELS = 12;
-const EYE_TRAVEL_Y_TEXELS = 4.5;
-const EYE_TRAVEL = new THREE.Vector2(EYE_TRAVEL_X_TEXELS / TEX, EYE_TRAVEL_Y_TEXELS / TEX);
-
-/* Thresholds in NORMALISED ellipse units: 1.0 is the aperture rim. The core
-   is set AT the rim, not inside it, so the iris is never clipped by the
-   falloff. Checked against the worst case (full decouple + full diagonal
-   gaze), where the outer edge of the iris reaches 0.96. Letting the iris
-   enter the falloff tears it — half the disc gets the shifted lookup and half
-   the unshifted one, which reads as a jagged bite out of the pupil. The
-   falloff therefore sits entirely outside the aperture, on the lid, where a
-   partial blend of two near-identical images is invisible. */
-const EYE_CORE = 1.0;
-const EYE_EDGE = 1.45;
+/* Normalised aperture units: 1.0 is the eyelid rim. The composite reaches
+   almost to the rim so the baked iris (whose outer edge sits at ~0.95) is
+   completely painted over — leaving any of it visible is precisely the stain
+   this refactor removes. */
+const EYE_CORE = 0.94;
+const EYE_EDGE = 1.12;
 
 const RIM_UNIFORM_DEFAULTS = () => ({
     uRimColor: { value: new THREE.Color('#8b93ff') },
@@ -280,16 +246,23 @@ const RIM_UNIFORM_DEFAULTS = () => ({
     // Delta from the baked cross-eyed rest pose, NOT an absolute gaze.
     uEyeLook: { value: new THREE.Vector2(0, 0) },
     uEyeTravel: { value: EYE_TRAVEL.clone() },
-    uEyeACenter: { value: EYE_A_CENTER.clone() },
-    uEyeARadius: { value: EYE_A_RADIUS.clone() },
-    uEyeBCenter: { value: EYE_B_CENTER.clone() },
-    uEyeBRadius: { value: EYE_B_RADIUS.clone() },
-    // 0 = baked cross-eye, 1 = both irises on their sclera centroids.
     uEyeDecouple: { value: 0 },
-    uEyeDecoupleA: { value: EYE_A_DECOUPLE.clone() },
-    uEyeDecoupleB: { value: EYE_B_DECOUPLE.clone() },
+    // Cross-fades the synthesised eye in as the gaze leaves rest, so a parked
+    // avatar still shows the original baked artwork.
+    uEyeProcedural: { value: 0 },
+    uEyeACenter: { value: EYE_A_CENTER.clone() },
+    uEyeAEllipse: { value: EYE_A_ELLIPSE.clone() },
+    uEyeAIris: { value: EYE_A_IRIS.clone() },
+    uEyeBCenter: { value: EYE_B_CENTER.clone() },
+    uEyeBEllipse: { value: EYE_B_ELLIPSE.clone() },
+    uEyeBIris: { value: EYE_B_IRIS.clone() },
     uEyeCore: { value: EYE_CORE },
     uEyeEdge: { value: EYE_EDGE },
+    uIrisRadius: { value: EYE_IRIS_RADIUS },
+    uTexSize: { value: TEX },
+    uScleraColor: { value: new THREE.Color().copy(SCLERA_COLOR) },
+    uIrisColor: { value: new THREE.Color().copy(IRIS_COLOR) },
+    uPupilColor: { value: new THREE.Color().copy(PUPIL_COLOR) },
 });
 
 const injectRimShader = (material, uniforms, lit) => {
@@ -313,11 +286,11 @@ const injectRimShader = (material, uniforms, lit) => {
 
     const EYE_BLOCK = `#ifdef ${albedoDefine}
 
-                     // ── Orthonormal screen→UV basis (the mapping matrix) ──
+                     // ── Orthonormal screen→UV basis ──────────────────────
                      // dFdx/dFdy give how UV changes per pixel of screen x/y.
                      // Gram-Schmidt makes the pair orthonormal so a unit gaze
-                     // vector produces the SAME texel displacement in every
-                     // direction: no anisotropy, no shear.
+                     // vector produces the same displacement in every
+                     // direction, on either eye, at any head angle.
                      vec2 duvdx = dFdx( ${albedoUv} );
                      vec2 duvdy = dFdy( ${albedoUv} );
                      vec2 axisX = duvdx / max( length( duvdx ), 1e-8 );
@@ -326,38 +299,24 @@ const injectRimShader = (material, uniforms, lit) => {
                          ? normalize( perpY )
                          : vec2( -axisX.y, axisX.x );
 
-                     // ── Gaze: shared, screen-space, so both eyes swing
-                     //    the same way once decoupled -> parallel tracking.
-                     // Anisotropic travel; see the budget in the header.
-                     vec2 gazeShift = uEyeLook.x * axisX * uEyeTravel.x
-                                    + uEyeLook.y * axisY * uEyeTravel.y;
+                     vec4 sampledAlbedo = texture2D( ${albedoSampler}, ${albedoUv} );
 
-                     // ── Convergence: per-eye, UV-space, welded to the face.
-                     // At uEyeDecouple = 0 this is zero and the baked
-                     // cross-eye is untouched.
-                     vec2 shiftA = gazeShift + uEyeDecoupleA * uEyeDecouple;
-                     vec2 shiftB = gazeShift + uEyeDecoupleB * uEyeDecouple;
+                     vec2 pTex = ${albedoUv} * uTexSize;
+                     float restLum = dot( sampledAlbedo.rgb, vec3( 0.2126, 0.7152, 0.0722 ) );
 
-                     // STATIC masks — see the aperture note in the header.
-                     // Each shift is a uniform, so it is constant across its
-                     // own mask: the translation stays rigid and the pupil
-                     // stays circular.
-                     float mA = eyeMask( ${albedoUv}, uEyeACenter, uEyeARadius );
-                     float mB = eyeMask( ${albedoUv}, uEyeBCenter, uEyeBRadius );
+                     // Shared screen-space gaze -> both eyes track together.
+                     vec2 gazeTex = axisX * ( uEyeLook.x * uEyeTravel.x )
+                                  + axisY * ( uEyeLook.y * uEyeTravel.y );
 
-                     // Nearest-eye select. The two masks are disjoint, so the
-                     // switch happens ~128 texels out where both are 0 and the
-                     // mix below is a no-op — no seam.
-                     vec2 eyeShift = mA >= mB ? shiftA : shiftB;
-                     float eyeInfluence = max( mA, mB );
+                     float mA, mB;
+                     vec3 eyeA = avatarEye( pTex, uEyeACenter * uTexSize, uEyeAEllipse,
+                                            uEyeAIris * uTexSize, gazeTex, axisX, axisY,
+                                            restLum, mA );
+                     vec3 eyeB = avatarEye( pTex, uEyeBCenter * uTexSize, uEyeBEllipse,
+                                            uEyeBIris * uTexSize, gazeTex, axisX, axisY,
+                                            restLum, mB );
 
-                     // Two RIGID lookups, cross-faded. Inside the core the
-                     // result is a pure translation (Jacobian = I, circle
-                     // preserved); the blend happens out on featureless skin.
-                     // At uEyeLook = 0 both fetches coincide -> baked pose.
-                     vec4 albedoRest = texture2D( ${albedoSampler}, ${albedoUv} );
-                     vec4 albedoLook = texture2D( ${albedoSampler}, ${albedoUv} - eyeShift );
-                     vec4 sampledAlbedo = mix( albedoRest, albedoLook, eyeInfluence );
+                     sampledAlbedo.rgb = mix( mix( sampledAlbedo.rgb, eyeA, mA ), eyeB, mB );
                      ${albedoApply}
 
                  #endif`;
@@ -396,23 +355,97 @@ const injectRimShader = (material, uniforms, lit) => {
                  uniform vec3  uLightDir;
                  uniform vec3  uTint;
                  uniform float uTintAmount;
+
                  uniform vec2  uEyeLook;
                  uniform vec2  uEyeTravel;
-                 uniform vec2  uEyeACenter;
-                 uniform vec2  uEyeARadius;
-                 uniform vec2  uEyeBCenter;
-                 uniform vec2  uEyeBRadius;
                  uniform float uEyeDecouple;
-                 uniform vec2  uEyeDecoupleA;
-                 uniform vec2  uEyeDecoupleB;
+                 uniform float uEyeProcedural;
+                 uniform vec2  uEyeACenter;
+                 uniform vec4  uEyeAEllipse;
+                 uniform vec2  uEyeAIris;
+                 uniform vec2  uEyeBCenter;
+                 uniform vec4  uEyeBEllipse;
+                 uniform vec2  uEyeBIris;
                  uniform float uEyeCore;
                  uniform float uEyeEdge;
+                 uniform float uIrisRadius;
+                 uniform float uTexSize;
+                 uniform vec3  uScleraColor;
+                 uniform vec3  uIrisColor;
+                 uniform vec3  uPupilColor;
 
-                 // Falloff in normalised aperture units: 1.0 is the eyelid rim.
-                 // The ellipse only shapes WHERE the blend happens; it cannot
-                 // distort the iris, because the shift inside is constant.
-                 float eyeMask( vec2 uv, vec2 c, vec2 r ) {
-                     return 1.0 - smoothstep( uEyeCore, uEyeEdge, length( ( uv - c ) / r ) );
+                 /* Draws one eye from scratch and returns how strongly it
+                    should replace the baked texture at this fragment.
+                    Everything is in TEXEL space, which is isotropic (the atlas
+                    is square), so a circle drawn here is a circle on the face. */
+                 vec3 avatarEye( vec2 pTex, vec2 cTex, vec4 ell, vec2 irisRestTex,
+                                 vec2 gazeTex, vec2 aX, vec2 aY, float restLum,
+                                 out float mask ) {
+
+                     vec2 d = pTex - cTex;
+                     // length(M * d) == 1.0 exactly on the eyelid rim
+                     float n = length( vec2( dot( ell.xy, d ), dot( ell.zw, d ) ) );
+
+                     // Baked position at rest, aperture centre + gaze when
+                     // decoupled. Lerping the POSITION is what keeps the
+                     // signature cross-eye at rest and parallel gaze on move.
+                     vec2 irisP = mix( irisRestTex, cTex + gazeTex, uEyeDecouple );
+
+                     // ── Layer 1: clean sclera ───────────────────────────
+                     // Contact occlusion toward the rim, deepened under the
+                     // upper lid (aY is screen-up, so this stays correct as
+                     // the head turns).
+                     float ao = mix( 1.0, 0.68, smoothstep( 0.58, 1.06, n ) );
+                     float upness = dot( normalize( d + vec2( 1e-6 ) ), aY );
+                     ao *= mix( 1.0, 0.84,
+                                smoothstep( 0.0, 0.9, upness ) * smoothstep( 0.30, 1.0, n ) );
+                     vec3 col = uScleraColor * ao;
+
+                     // ── Layer 2: circular iris ──────────────────────────
+                     float r = length( pTex - irisP ) / uIrisRadius;
+                     float aa = max( fwidth( r ), 1e-3 ) * 1.1;
+                     vec3 iris = mix( uIrisColor * 1.50, uIrisColor * 0.75,
+                                      smoothstep( 0.15, 1.0, r ) );
+                     iris = mix( iris, uIrisColor * 0.35, smoothstep( 0.72, 1.0, r ) ); // limbal ring
+                     iris = mix( uPupilColor, iris, smoothstep( 0.30, 0.42, r ) );      // pupil
+                     float irisA = 1.0 - smoothstep( 1.0 - aa, 1.0 + aa, r );
+                     col = mix( col, iris, irisA );
+
+                     // Catchlight rides with the iris — on a bust this small it
+                     // reads as part of the eye rather than as a reflection
+                     // sliding off it.
+                     vec2 hl = irisP + ( aX * -0.34 + aY * 0.34 ) * uIrisRadius;
+                     float hA = 1.0 - smoothstep( 0.40, 1.0,
+                                    length( pTex - hl ) / ( uIrisRadius * 0.30 ) );
+                     col = mix( col, vec3( 0.86 ), hA * mix( 0.12, 1.0, irisA ) );
+
+                     // Preserve the baked lash line: it is dark and lives
+                     // OUTSIDE the baked iris, so a luminance guard keeps it
+                     // while still letting the baked iris be painted over.
+                     // The guard exists to keep the baked eyelash line, which
+                     // lives at the RIM. Anything dark deeper inside the
+                     // aperture is baked iris or its shadow — exactly the
+                     // stains this refactor removes — so the guard is switched
+                     // off there. Without the aperture term the guard preserves
+                     // those stains too, and they reappear as dark specks
+                     // floating in the clean sclera.
+                     float bakedIris = 1.0 - smoothstep( uIrisRadius * 1.02, uIrisRadius * 1.45,
+                                                         length( pTex - irisRestTex ) );
+                     float interior = 1.0 - smoothstep( 0.55, 0.85, n );
+                     float lidGuard = max( smoothstep( 0.05, 0.16, restLum ),
+                                           max( bakedIris, interior ) );
+
+                     // The baked iris is crossed hard, so its outer crescent
+                     // sits at n ~ 1.05 — OUTSIDE the aperture ellipse. Masking
+                     // by the aperture alone leaves that crescent unpainted and
+                     // it reads as a dark jagged fringe beside the drawn iris.
+                     // Union the aperture with a disc over the baked iris so it
+                     // is always fully erased.
+                     float aperture = 1.0 - smoothstep( uEyeCore, uEyeEdge, n );
+                     float bakedCover = 1.0 - smoothstep( uIrisRadius * 1.10, uIrisRadius * 1.45,
+                                                          length( pTex - irisRestTex ) );
+                     mask = max( aperture, bakedCover ) * lidGuard * uEyeProcedural;
+                     return col;
                  }`
         );
 
@@ -427,7 +460,7 @@ const injectRimShader = (material, uniforms, lit) => {
 
         shader.fragmentShader = frag;
     };
-    material.customProgramCacheKey = () => `avatar-rim-eyes-v6-${lit ? 'pbr' : 'shaded'}`;
+    material.customProgramCacheKey = () => `avatar-eye-procedural-v8-${lit ? 'pbr' : 'shaded'}`;
     material.needsUpdate = true;
 };
 
@@ -617,6 +650,19 @@ const AvatarModel = ({ pointer, scrollVelocity, currentSection, reducedMotion })
             uniforms.uEyeDecouple.value,
             decoupleTarget,
             3.5,
+            delta
+        );
+
+        /* The synthesised eye fades in earlier and faster than the decouple
+           ramp, so the sclera is already clean by the time the iris has moved
+           far enough to expose anything. Both are driven off the same gaze
+           magnitude, so the drawn iris and the baked one coincide during the
+           hand-off — no double pupil. */
+        const pk = THREE.MathUtils.clamp((gazeMag - 0.015) / 0.12, 0, 1);
+        uniforms.uEyeProcedural.value = THREE.MathUtils.damp(
+            uniforms.uEyeProcedural.value,
+            reducedMotion ? 0 : pk * pk * (3 - 2 * pk),
+            6,
             delta
         );
 
