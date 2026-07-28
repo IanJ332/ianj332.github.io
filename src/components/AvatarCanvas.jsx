@@ -205,15 +205,25 @@ const EYE_B_CENTER = px2uv(511.5, 1727.5);
 const EYE_B_ELLIPSE = ellipse(90.0, 37.5, 15.5);
 const EYE_B_IRIS = px2uv(511.0, 1703.0);
 
-/* DRAWN iris radius. Deliberately larger than the 14-texel disc that is baked
-   into the map: at 14 the iris covers only ~38% of the 74-texel aperture,
-   which reads as pin-eyed and startled. 24 fills the opening the way a
-   cartoon-hero eye does, and makes the gaze direction legible at a glance —
-   at 14 it was hard to tell which way the eyes were pointing at all.
-   ONE uniform feeds both eyes, so the two drawn radii are identical by
-   construction; they can only differ by the UV foreshortening of the head
-   itself, which is correct. */
-const EYE_IRIS_RADIUS = 24.0;
+/* DRAWN iris radius, in texels of eye A. Compared against the baked original
+   in a 2D re-render of the shader: 24 overflowed the sclera and read as a
+   cartoon; 14 (the baked size) read as pin-eyed; 17 sits just inside the white
+   with sclera visible all round, matching the reference proportion while
+   staying more expressive than the baked art. It also fits INSIDE both
+   apertures (semi-minor 18 and 15.5), so neither iris is clipped by the lid
+   mask — differential clipping between the two eyes was the real source of
+   the "uneven pupils" look at 24. */
+const EYE_IRIS_RADIUS = 17.0;
+
+/* Per-eye radius correction. The two eyes are the same physical size but the
+   unwrap gives them different texel densities — aperture geometric means are
+   sqrt(37*18) = 25.8 for A and sqrt(37.5*15.5) = 24.1 for B. B therefore has
+   ~7% fewer texels covering the same surface, so an identical texel radius
+   renders ~7% LARGER on B. Scaling B by 24.1/25.8 makes the two irises the
+   same size on screen, which is what "identical" has to mean here — matching
+   the texel number would not. */
+const EYE_A_IRIS_SCALE = 1.0;
+const EYE_B_IRIS_SCALE = 0.934;
 
 /* The radius of the iris actually PAINTED IN THE TEXTURE. This is a separate
    number from the drawn radius and must stay at the measured value: it sizes
@@ -272,8 +282,9 @@ const RIM_UNIFORM_DEFAULTS = () => ({
     uEyeBIris: { value: EYE_B_IRIS.clone() },
     uEyeCore: { value: EYE_CORE },
     uEyeEdge: { value: EYE_EDGE },
-    uIrisRadius: { value: EYE_IRIS_RADIUS },
     uBakedIrisRadius: { value: BAKED_IRIS_RADIUS },
+    uEyeAIrisR: { value: EYE_IRIS_RADIUS * EYE_A_IRIS_SCALE },
+    uEyeBIrisR: { value: EYE_IRIS_RADIUS * EYE_B_IRIS_SCALE },
     uTexSize: { value: TEX },
     uScleraColor: { value: new THREE.Color().copy(SCLERA_COLOR) },
     uIrisColor: { value: new THREE.Color().copy(IRIS_COLOR) },
@@ -326,10 +337,10 @@ const injectRimShader = (material, uniforms, lit) => {
                      float mA, mB;
                      vec3 eyeA = avatarEye( pTex, uEyeACenter * uTexSize, uEyeAEllipse,
                                             uEyeAIris * uTexSize, gazeTex, axisX, axisY,
-                                            restLum, mA );
+                                            restLum, uEyeAIrisR, mA );
                      vec3 eyeB = avatarEye( pTex, uEyeBCenter * uTexSize, uEyeBEllipse,
                                             uEyeBIris * uTexSize, gazeTex, axisX, axisY,
-                                            restLum, mB );
+                                            restLum, uEyeBIrisR, mB );
 
                      sampledAlbedo.rgb = mix( mix( sampledAlbedo.rgb, eyeA, mA ), eyeB, mB );
                      ${albedoApply}
@@ -383,8 +394,9 @@ const injectRimShader = (material, uniforms, lit) => {
                  uniform vec2  uEyeBIris;
                  uniform float uEyeCore;
                  uniform float uEyeEdge;
-                 uniform float uIrisRadius;
                  uniform float uBakedIrisRadius;
+                 uniform float uEyeAIrisR;
+                 uniform float uEyeBIrisR;
                  uniform float uTexSize;
                  uniform vec3  uScleraColor;
                  uniform vec3  uIrisColor;
@@ -396,7 +408,7 @@ const injectRimShader = (material, uniforms, lit) => {
                     is square), so a circle drawn here is a circle on the face. */
                  vec3 avatarEye( vec2 pTex, vec2 cTex, vec4 ell, vec2 irisRestTex,
                                  vec2 gazeTex, vec2 aX, vec2 aY, float restLum,
-                                 out float mask ) {
+                                 float uIrisRadius, out float mask ) {
 
                      vec2 d = pTex - cTex;
                      // length(M * d) == 1.0 exactly on the eyelid rim
@@ -476,7 +488,7 @@ const injectRimShader = (material, uniforms, lit) => {
 
         shader.fragmentShader = frag;
     };
-    material.customProgramCacheKey = () => `avatar-eye-procedural-v9-${lit ? 'pbr' : 'shaded'}`;
+    material.customProgramCacheKey = () => `avatar-eye-procedural-v10-${lit ? 'pbr' : 'shaded'}`;
     material.needsUpdate = true;
 };
 
