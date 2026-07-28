@@ -1,6 +1,6 @@
-import React, { useRef, useMemo, useEffect, Suspense, Component } from 'react';
+import React, { useRef, useMemo, useEffect, useLayoutEffect, Suspense, Component } from 'react';
 import { Canvas, useFrame } from '@react-three/fiber';
-import { useGLTF } from '@react-three/drei';
+import { useGLTF, Environment } from '@react-three/drei';
 import {
     EffectComposer,
     Bloom,
@@ -20,11 +20,15 @@ import * as THREE from 'three';
                emissiveFactor [1,1,1] + emissiveTexture "shaded" (webp)
    bounds:     1.605 (w) x 1.904 (h) x 1.045 (d), origin at the neck base
 
-   → EYE ROTATION IS NOT ACHIEVABLE. There is no eye submesh to target, no
-     bone to rotate, no morph target to drive, and the eyes are baked into a
-     single continuous UV island of the body texture — a UV-offset shift or
-     vertex displacement would smear the surrounding face geometry.
-     Real eye motion requires re-rigging the asset (split eye spheres + bones).
+   → EYE *ROTATION* IS NOT ACHIEVABLE — no eye submesh, no bone, no morph
+     target. Geometric slicing was rejected too: the eye is a continuous
+     surface with the lids, so displacing a vertex island tears the mesh, and
+     photogrammetry gives a flat-ish eye rather than a sphere to rotate.
+
+     Eye MOTION is achieved instead by displacing the texture lookup so the
+     painted iris slides across the painted sclera. See PROCEDURAL EYE
+     TRACKING below for the measured UV regions and why the offset basis
+     comes from screen-space derivatives.
 
    → The material is UNLIT (black albedo, full emissive). Every directional /
      point / hemisphere light in the old rig contributed exactly nothing.
@@ -33,7 +37,27 @@ import * as THREE from 'three';
      `totalEmissiveRadiance`, plus spring-damped rigid-body motion.
    ═══════════════════════════════════════════════════════════════════════ */
 
-const MODEL_URL = '/models/avatar.glb';
+/* ── MODEL VARIANT ────────────────────────────────────────────────────────
+   'shaded' — unlit baked-lighting bust (10 MB, meshopt + webp). Ships today.
+   'pbr'    — same 781k-vert geometry with baseColor + normal +
+              metallicRoughness maps, relit with three real lights + HDRI IBL.
+              VERIFIED WORKING, including eye tracking, but NOT shipped:
+              the source GLB is 55 MB uncompressed (781k verts, 3x 2048 PNG)
+              versus 10 MB for the meshopt+webp shaded build, and relighting a
+              photogrammetry albedo that already carries baked AO pushes the
+              skin orange and glossy. Shipping it needs a decimate + meshopt +
+              webp/KTX2 pass and a material tuning pass first.
+              To re-run the comparison:
+                cp ~/Downloads/base_basic_pbr.glb public/models/avatar_pbr.glb
+                set VARIANT = 'pbr' */
+const MODEL_VARIANTS = {
+    shaded: { url: '/models/avatar.glb', lit: false },
+    pbr: { url: '/models/avatar_pbr.glb', lit: true },
+};
+const VARIANT = 'shaded';
+const MODEL_URL = MODEL_VARIANTS[VARIANT].url;
+const MODEL_LIT = MODEL_VARIANTS[VARIANT].lit;
+
 const DEG2RAD = Math.PI / 180;
 
 /* Camera is FIXED. All framing is solved against it so the head can never
@@ -121,6 +145,51 @@ class CanvasErrorBoundary extends Component {
    ~1.8 makes the rim stop blooming entirely. */
 const RIM_HDR_GAIN = 2.4;
 
+/* ═══════════════════════════════════════════════════════════════════════
+   PROCEDURAL EYE TRACKING
+   ───────────────────────────────────────────────────────────────────────
+   The mesh has no eye submesh, no bone and no morph target, so the eyes
+   cannot be rotated. What the asset DOES have is a lucky UV layout: both
+   eyes land in a single contiguous island in the lower-left of the 2048²
+   atlas, and the irises are painted onto a flat-ish surface (photogrammetry
+   does not model an eyeball as a sphere). So the iris can be MOVED ACROSS
+   THE SCLERA by offsetting the texture lookup inside a soft elliptical mask.
+
+   Values below were measured, not guessed: sclera pixels were isolated in
+   the diffuse map by (value > 0.80 && saturation < 0.20), clustered into two
+   groups, and the iris located as the dark core inside each cluster.
+
+       EYE A  sclera centre px (233.7, 1713.7)  halfspan (26.5, 18.0)
+              iris   centre px (255.4, 1713.5)
+       EYE B  sclera centre px (512.3, 1734.3)  halfspan (15.5, 25.0)
+              iris   centre px (511.3, 1718.2)
+
+   Two things to note:
+   • glTF UV origin is TOP-left and GLTFLoader sets flipY = false, so
+     v = py / 2048 directly (NOT 1 - py/2048).
+   • The two eyes sit at ~90° to each other in the atlas — eye A is wide and
+     short, eye B is narrow and tall. A fixed UV-space direction would send
+     one iris sideways and the other vertically. The shader therefore derives
+     its offset basis from dFdx/dFdy of the UV, i.e. from the actual
+     screen→UV mapping, which is correct per-eye AND automatically follows
+     the head as it rotates.
+   ═══════════════════════════════════════════════════════════════════════ */
+const TEX = 2048;
+const px2uv = (x, y) => new THREE.Vector2(x / TEX, y / TEX);
+const span2uv = (x, y) => new THREE.Vector2(x / TEX, y / TEX);
+
+/* Mask sits between the sclera centroid and the iris so the iris always
+   falls inside the full-displacement core (r < 0.55), while the sclera↔lid
+   boundary lands in the feathered edge where displacement decays to zero. */
+const EYE_A_CENTER = px2uv(244.6, 1713.6);
+const EYE_A_RADIUS = span2uv(30, 20);
+const EYE_B_CENTER = px2uv(511.8, 1726.3);
+const EYE_B_RADIUS = span2uv(20, 30);
+
+/* Max iris travel in UV units. 0.0045 ≈ 9 px of a 2048 map ≈ half an iris
+   width — past roughly 0.006 the iris starts to climb onto the eyelid. */
+const EYE_TRAVEL = 0.0045;
+
 const RIM_UNIFORM_DEFAULTS = () => ({
     uRimColor: { value: new THREE.Color('#8b93ff') },
     uRimAmount: { value: 0.55 },
@@ -128,30 +197,66 @@ const RIM_UNIFORM_DEFAULTS = () => ({
     uLightDir: { value: new THREE.Vector3(0, 0, 1) },
     uTint: { value: new THREE.Color('#ffffff') },
     uTintAmount: { value: 0 },
+    uEyeLook: { value: new THREE.Vector2(0, 0) },
+    uEyeTravel: { value: EYE_TRAVEL },
+    uEyeACenter: { value: EYE_A_CENTER.clone() },
+    uEyeARadius: { value: EYE_A_RADIUS.clone() },
+    uEyeBCenter: { value: EYE_B_CENTER.clone() },
+    uEyeBRadius: { value: EYE_B_RADIUS.clone() },
 });
 
-const injectRimShader = (material, uniforms) => {
-    material.onBeforeCompile = (shader) => {
-        Object.assign(shader.uniforms, uniforms);
+const injectRimShader = (material, uniforms, lit) => {
+    /* Which chunk performs the albedo lookup differs per variant:
+         shaded → <emissivemap_fragment> / vEmissiveMapUv / emissiveMap
+         pbr    → <map_fragment>         / vMapUv         / map
+       Normal and roughness maps are deliberately NOT displaced: we want the
+       painted iris to slide across the sclera, not the surface itself. */
+    const albedoChunk = lit ? 'map_fragment' : 'emissivemap_fragment';
+    const albedoUv = lit ? 'vMapUv' : 'vEmissiveMapUv';
+    const albedoDefine = lit ? 'USE_MAP' : 'USE_EMISSIVEMAP';
+    const albedoSampler = lit ? 'map' : 'emissiveMap';
+    /* On the unlit variant the texture IS the lit result, so it lands in
+       emissive. On PBR it is true albedo and must go through the BRDF. The
+       section grade rides along with whichever one carries the colour. */
+    const albedoApply = lit
+        ? `diffuseColor *= sampledAlbedo;
+           diffuseColor.rgb *= mix( vec3( 1.0 ), uTint, uTintAmount );`
+        : `totalEmissiveRadiance *= sampledAlbedo.rgb;
+           totalEmissiveRadiance *= mix( vec3( 1.0 ), uTint, uTintAmount );`;
 
-        shader.fragmentShader = shader.fragmentShader
-            .replace(
-                '#include <common>',
-                `#include <common>
-                 uniform vec3  uRimColor;
-                 uniform float uRimAmount;
-                 uniform float uRimPower;
-                 uniform vec3  uLightDir;
-                 uniform vec3  uTint;
-                 uniform float uTintAmount;`
-            )
-            .replace(
-                '#include <emissivemap_fragment>',
-                `#include <emissivemap_fragment>
+    const EYE_BLOCK = `#ifdef ${albedoDefine}
 
-                 // Section colour grade — subtle, never washes the photogrammetry out.
-                 totalEmissiveRadiance *= mix( vec3( 1.0 ), uTint, uTintAmount );
+                     // Screen→UV basis. dFdx/dFdy give how UV changes per pixel
+                     // of screen x/y, so normalising them yields the UV direction
+                     // of "screen right" and "screen up" AT THIS FRAGMENT —
+                     // independent of how the atlas rotated this island, and
+                     // re-derived every frame as the head turns.
+                     vec2 duvdx = dFdx( ${albedoUv} );
+                     vec2 duvdy = dFdy( ${albedoUv} );
+                     vec2 axisX = normalize( duvdx + vec2( 1e-8 ) );
+                     vec2 axisY = normalize( duvdy + vec2( 1e-8 ) );
 
+                     float eyeInfluence = max(
+                         eyeMask( ${albedoUv}, uEyeACenter, uEyeARadius ),
+                         eyeMask( ${albedoUv}, uEyeBCenter, uEyeBRadius )
+                     );
+
+                     // Sample AGAINST the look direction: pulling the lookup
+                     // upstream slides the painted iris downstream.
+                     vec2 eyeShift = ( uEyeLook.x * axisX + uEyeLook.y * axisY )
+                                     * uEyeTravel * eyeInfluence;
+
+                     vec4 sampledAlbedo = texture2D( ${albedoSampler}, ${albedoUv} - eyeShift );
+                     ${albedoApply}
+
+                 #endif`;
+
+    /* The rim needs `normal`, which only exists after <normal_fragment_begin>.
+       <map_fragment> runs BEFORE that, so the rim can never be appended to the
+       albedo block on the PBR path — it is always anchored to
+       <emissivemap_fragment>, which sits after the normal chunks in
+       meshphysical_frag for both variants. */
+    const RIM_BLOCK = `
                  // Silhouette fresnel. View-space normal.z is the view-alignment
                  // term, so 1 - |n.z| peaks exactly on the silhouette edge.
                  float rimFresnel = pow( 1.0 - saturate( abs( normal.z ) ), uRimPower );
@@ -166,12 +271,45 @@ const injectRimShader = (material, uniforms) => {
                  // thresholded at luminance 1.0 picks up the rim and nothing
                  // else — that is what makes the glow track the silhouette
                  // instead of haloing the whole face.
-                 totalEmissiveRadiance += uRimColor * rimFresnel * rimFacing * uRimAmount * ${RIM_HDR_GAIN.toFixed(1)};`
-            );
+                 totalEmissiveRadiance += uRimColor * rimFresnel * rimFacing * uRimAmount * ${RIM_HDR_GAIN.toFixed(1)};`;
+
+    material.onBeforeCompile = (shader) => {
+        Object.assign(shader.uniforms, uniforms);
+
+        let frag = shader.fragmentShader.replace(
+            '#include <common>',
+            `#include <common>
+                 uniform vec3  uRimColor;
+                 uniform float uRimAmount;
+                 uniform float uRimPower;
+                 uniform vec3  uLightDir;
+                 uniform vec3  uTint;
+                 uniform float uTintAmount;
+                 uniform vec2  uEyeLook;
+                 uniform float uEyeTravel;
+                 uniform vec2  uEyeACenter;
+                 uniform vec2  uEyeARadius;
+                 uniform vec2  uEyeBCenter;
+                 uniform vec2  uEyeBRadius;
+
+                 // Soft elliptical falloff: 1.0 in the core, 0.0 past the rim.
+                 float eyeMask( vec2 uv, vec2 c, vec2 r ) {
+                     return 1.0 - smoothstep( 0.55, 1.0, length( ( uv - c ) / r ) );
+                 }`
+        );
+
+        // Varyings are read-only in the fragment stage, so the albedo chunk is
+        // replaced outright rather than appended to — that is the only place
+        // the lookup coordinate can be displaced.
+        frag = frag.replace(`#include <${albedoChunk}>`, EYE_BLOCK);
+
+        frag = lit
+            ? frag.replace('#include <emissivemap_fragment>', `#include <emissivemap_fragment>${RIM_BLOCK}`)
+            : frag.replace(EYE_BLOCK, `${EYE_BLOCK}${RIM_BLOCK}`);
+
+        shader.fragmentShader = frag;
     };
-    // Force a program rebuild so onBeforeCompile runs even if the material
-    // was already compiled by a previous mount.
-    material.customProgramCacheKey = () => 'avatar-rim-v1';
+    material.customProgramCacheKey = () => `avatar-rim-eyes-v3-${lit ? 'pbr' : 'shaded'}`;
     material.needsUpdate = true;
 };
 
@@ -191,6 +329,10 @@ const AvatarModel = ({ pointer, scrollVelocity, currentSection, reducedMotion })
        mechanical left-to-right "jump". */
     const spring = useRef({ ry: 0, rx: 0, rz: 0, vy: 0, vx: 0, vz: 0 });
     const posSpring = useRef({ x: 0, y: 1.1, vx: 0, vy: 0 });
+    /* Eyes run a stiffer, lighter spring than the head so the gaze arrives
+       first and the head follows — which is how people actually look at
+       things, and what stops the two motions reading as one rigid unit. */
+    const eyeSpring = useRef({ x: 0, y: 0, vx: 0, vy: 0 });
     const lightDir = useMemo(() => new THREE.Vector3(0, 0, 1), []);
     const tmpColor = useMemo(() => new THREE.Color(), []);
 
@@ -214,7 +356,11 @@ const AvatarModel = ({ pointer, scrollVelocity, currentSection, reducedMotion })
     /* Material setup: front faces only (the GLB ships doubleSided, which is
        what made the fading avatar look like a see-through skull — you were
        seeing the inside of the back of the head through the face). */
-    useEffect(() => {
+    /* useLayoutEffect, not useEffect: the material has to be patched BEFORE
+       R3F's first rAF render. Patching afterwards compiles the stock program,
+       then forces a rebuild, and WebGL logs "useProgram: program not valid"
+       for the frames in between. */
+    useLayoutEffect(() => {
         const mats = [];
         scene.traverse((child) => {
             if (!child.isMesh || !child.material) return;
@@ -228,7 +374,15 @@ const AvatarModel = ({ pointer, scrollVelocity, currentSection, reducedMotion })
             // the end of the chain by the <ToneMapping> effect, so the base
             // texture ends up looking exactly as it did before.
             mat.toneMapped = false;
-            injectRimShader(mat, uniforms);
+            if (MODEL_LIT) {
+                // Photogrammetry albedo already carries a little baked shading;
+                // nudging roughness up stops the specular reading as plastic.
+                mat.roughness = 0.82;
+                mat.metalness = 0.0;
+                mat.envMapIntensity = 1.15;
+                if (mat.normalScale) mat.normalScale.set(0.85, 0.85);
+            }
+            injectRimShader(mat, uniforms, MODEL_LIT);
             mats.push(mat);
             child.frustumCulled = false;
         });
@@ -317,6 +471,21 @@ const AvatarModel = ({ pointer, scrollVelocity, currentSection, reducedMotion })
             // Only pay the transparent-sort cost when we are actually fading.
             mat.transparent = mat.opacity < 0.995;
         }
+
+        /* ── Procedural eye tracking ───────────────────────────────────── */
+        const eye = eyeSpring.current;
+        const eyeTargetX = reducedMotion ? 0 : THREE.MathUtils.clamp(mx * 1.2, -1, 1);
+        const eyeTargetY = reducedMotion ? 0 : THREE.MathUtils.clamp(my * 0.85, -1, 1);
+        const eyeStiff = 130;
+        const eyeDamp = 15;
+        eye.vx += (eyeTargetX - eye.x) * eyeStiff * delta;
+        eye.vy += (eyeTargetY - eye.y) * eyeStiff * delta;
+        const eyeDecay = Math.exp(-eyeDamp * delta);
+        eye.vx *= eyeDecay;
+        eye.vy *= eyeDecay;
+        eye.x += eye.vx * delta;
+        eye.y += eye.vy * delta;
+        uniforms.uEyeLook.value.set(eye.x, eye.y);
 
         /* ── Cursor-driven rim light ────────────────────────────────────── */
         lightDir.set(mx, my * 0.7, 0.55).normalize();
@@ -465,10 +634,24 @@ const FullscreenAvatarCanvasInner = ({ currentSection, theme }) => {
                 gl={{ antialias: true, alpha: true, powerPreference: 'high-performance' }}
                 dpr={[1, 1.75]}
             >
-                {/* The material is unlit (emissive-only); a single ambient light is
-                    kept purely so the scene stays valid if the asset is ever
-                    swapped for a PBR-shaded one. */}
-                <ambientLight intensity={1} />
+                {MODEL_LIT ? (
+                    <>
+                        {/* IBL does the heavy lifting on a PBR scan — it is what
+                            produces believable skin falloff and the moving
+                            specular in the eyes. The HDRI was already in the
+                            repo, previously unused. */}
+                        <Environment files="/hdri/potsdamer_platz_1k.hdr" />
+                        <ambientLight intensity={0.25} />
+                        <directionalLight position={[3, 4, 5]} intensity={2.2} castShadow />
+                        <directionalLight position={[-4, 2, 2]} intensity={0.6} color="#b6c4ff" />
+                        <directionalLight position={[0, 3, -4]} intensity={1.1} color="#ffd9b0" />
+                    </>
+                ) : (
+                    /* The shaded material is unlit (emissive-only); this light
+                       contributes nothing and is kept only so the scene stays
+                       valid if the asset is swapped. */
+                    <ambientLight intensity={1} />
+                )}
                 <Suspense fallback={null}>
                     <AvatarModel
                         pointer={pointer}
