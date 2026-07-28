@@ -145,6 +145,29 @@ class CanvasErrorBoundary extends Component {
    ~1.8 makes the rim stop blooming entirely. */
 const RIM_HDR_GAIN = 2.4;
 
+/* ── RIM SUPPRESSION REGIONS ─────────────────────────────────────────────
+   The rim term is a view-grazing fresnel, and a surface grazes the view at
+   the silhouette AND inside concave pockets — so the rim also ignited the
+   nostril openings and the inside of the mouth, reading as light shining
+   into the skull. Those pockets live at fixed places in the atlas, so they
+   are masked in UV space (same measured-ellipse approach as the eyes).
+   Each entry is (centerX, centerY, semiX, semiY) in texels of the 2048 map,
+   measured from full-res crops of the atlas:
+     1. both nostril openings on the nose island
+     2. the mouth: lips, teeth row, tongue, inner cavity
+     3. the secondary teeth/inner-mouth island near the atlas edge      */
+const RIM_SUPPRESS_REGIONS = [
+    [1900, 500, 80, 50],
+    [1897, 675, 100, 115],
+    [1995, 1540, 70, 190],
+];
+const RIM_SUPPRESS_GLSL = RIM_SUPPRESS_REGIONS.map(
+    ([cx, cy, sx, sy], i) => `
+                 rimSupp = max( rimSupp, 1.0 - smoothstep( 0.8, 1.2,
+                     length( ( rimTex - vec2( ${cx.toFixed(1)}, ${cy.toFixed(1)} ) )
+                             / vec2( ${sx.toFixed(1)}, ${sy.toFixed(1)} ) ) ) );`
+).join('');
+
 /* ═══════════════════════════════════════════════════════════════════════
    PROCEDURAL EYE
    ───────────────────────────────────────────────────────────────────────
@@ -362,12 +385,19 @@ const injectRimShader = (material, uniforms, lit) => {
                  float rimFacing = saturate( dot( normal, normalize( uLightDir ) ) );
                  rimFacing = rimFacing * rimFacing;
 
+                 // Concave pockets (nostrils, mouth interior) graze the view just
+                 // like the silhouette does, so the fresnel alone would light
+                 // them from inside. Kill the rim over the measured UV islands.
+                 vec2 rimTex = ${albedoUv} * uTexSize;
+                 float rimSupp = 0.0;${RIM_SUPPRESS_GLSL}
+
                  // RIM_HDR_GAIN pushes the hottest sliver of the rim ABOVE 1.0.
                  // The baked body texture never exceeds 1.0, so a bloom pass
                  // thresholded at luminance 1.0 picks up the rim and nothing
                  // else — that is what makes the glow track the silhouette
                  // instead of haloing the whole face.
-                 totalEmissiveRadiance += uRimColor * rimFresnel * rimFacing * uRimAmount * ${RIM_HDR_GAIN.toFixed(1)};`;
+                 totalEmissiveRadiance += uRimColor * rimFresnel * rimFacing * uRimAmount
+                                          * ( 1.0 - rimSupp ) * ${RIM_HDR_GAIN.toFixed(1)};`;
 
     material.onBeforeCompile = (shader) => {
         Object.assign(shader.uniforms, uniforms);
@@ -488,7 +518,7 @@ const injectRimShader = (material, uniforms, lit) => {
 
         shader.fragmentShader = frag;
     };
-    material.customProgramCacheKey = () => `avatar-eye-procedural-v10-${lit ? 'pbr' : 'shaded'}`;
+    material.customProgramCacheKey = () => `avatar-eye-procedural-v11-${lit ? 'pbr' : 'shaded'}`;
     material.needsUpdate = true;
 };
 
