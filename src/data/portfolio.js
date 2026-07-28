@@ -1,7 +1,5 @@
 /* Change this file to get your personal Portfolio */
 
-// To change portfolio colors globally go to the  _globalColor.scss file
-
 const emoji = (string) => string;
 
 const splashScreen = {
@@ -10,61 +8,82 @@ const splashScreen = {
 };
 
 // Summary And Greeting Section
-
 const illustration = {
-  animated: true // Set to false to use static SVG
+  animated: true
 };
 
 const greeting = {
   username: "Ian Jiang",
-  title: "Hi all, I'm Ian",
+  fullLegalName: "Jisheng Jiang",
+  title: "Full-Stack Software Engineer & ML Researcher",
   subTitle: emoji(
-    "I’m a Full-Stack Software Engineer with a specialization in AI model training, backend systems, and cloud-based architecture. My core proficiencies include Python, Java, JavaScript, and a variety of modern backend frameworks, allowing me to deliver high-performance, scalable solutions."
+    "I’m a Full-Stack Software Engineer specializing in AI agent infrastructure, LLM retrieval pipelines, and high-concurrency cloud architecture. With deep expertise across Python, Java, TypeScript, and modern AI frameworks, I build scalable systems with rigorous safety guardrails."
   ),
-  // resumeLink: "/resume.pdf", // 只写 /resume.pdf，因为public目录默认就是根目录
-  resumeLink:
-    "https://drive.google.com/file/d/1LWvYgkYbMujArbqPk4KPg-zBK91V5-uk/view?usp=sharing", // Set to empty to hide the button
-  displayGreeting: true // Set false to hide this section, defaults to true
+  resumeLink: "https://drive.google.com/file/d/1LWvYgkYbMujArbqPk4KPg-zBK91V5-uk/view?usp=sharing",
+  displayGreeting: true
 };
 
 // Social Media Links
-
 const socialMediaLinks = {
   github: "https://github.com/IanJ332",
   linkedin: "https://www.linkedin.com/in/jisheng-jiang/",
   gmail: "jiangjs03@gmail.com",
-  // gitlab: "https://gitlab.com/saadpasta",
-  // facebook: "https://www.facebook.com/saad.pasta7",
   medium: "https://medium.com/@jiangjs03",
-  // stackoverflow: "https://stackoverflow.com/users/10422806/saad-pasta",
-  // Instagram, Twitter and Kaggle are also supported in the links!
-  // To customize icons and social links, tweak src/components/SocialMedia
-  display: true // Set true to display this section, defaults to false
+  agenticSkillsRepo: "https://github.com/sickn33/agentic-awesome-skills",
+  display: true
 };
 
-// Skills Section
-
+// Enhanced Tech Stack & Skill Vault
 const skillsSection = {
-  title: "Technical Skills",
-  subTitle: "",
-  introText: "I build production-grade AI and backend systems, with experience across LLM applications, retrieval pipelines, and scalable web products.",
-  skills: [], // Removed verbose prose
+  title: "Technical Expertise & Skill Vault",
+  subTitle: "ENGINEERING PROFICIENCY & ARCHITECTURAL STACK",
+  introText: "Production-grade experience across AI Infrastructure, Scalable Microservices, Cloud Orchestration, and Modern High-Performance Web Applications.",
   softwareSkills: [
     {
-      category: "Backend & Platform",
-      skills: ["Java", "Spring Boot", "Python", "TypeScript", "REST", "GraphQL", "Kubernetes", "AWS", "GCP"]
+      category: "AI Systems & Infrastructure",
+      description: "Agent Orchestration, Retrieval Pipelines & Inference Optimization",
+      skills: [
+        { name: "Agentic AI & Guardrails", level: "Expert" },
+        { name: "LLM Routing & Context Management", level: "Advanced" },
+        { name: "RAG & Vector Search (Milvus, FAISS)", level: "Advanced" },
+        { name: "Multi-Agent Debate & 3D Scoring", level: "Research" },
+        { name: "FastAPI / WebSocket Streaming", level: "Expert" },
+        { name: "PyTorch & Int8 Quantization", level: "Advanced" }
+      ]
     },
     {
-      category: "AI Systems",
-      skills: ["RAG", "LLM routing", "context management", "vector search", "inference optimization", "GAN"]
+      category: "Backend & Cloud Architecture",
+      description: "Distributed Systems, Microservices & Containerization",
+      skills: [
+        { name: "Java & Spring Boot", level: "Expert" },
+        { name: "Python (AsyncIO / Databricks)", level: "Expert" },
+        { name: "TypeScript & Node.js", level: "Advanced" },
+        { name: "GraphQL & RESTful APIs", level: "Expert" },
+        { name: "AWS EKS (Kubernetes) & GCP", level: "Advanced" },
+        { name: "CI/CD (Jenkins, Docker)", level: "Advanced" }
+      ]
     },
     {
-      category: "Data & Storage",
-      skills: ["PostgreSQL", "MySQL", "Redis", "MongoDB", "ETL", "Supabase", "FAISS", "Milvus"]
+      category: "Data Engineering & Storage",
+      description: "Relational, NoSQL Databases & High-Concurrency Caching",
+      skills: [
+        { name: "PostgreSQL & MySQL", level: "Expert" },
+        { name: "Redis Caching & Latency Optimization", level: "Advanced" },
+        { name: "Supabase & Realtime DB", level: "Advanced" },
+        { name: "ETL Pipelines & Data Sync", level: "Advanced" },
+        { name: "Pessimistic Locking & ACID Correctness", level: "Expert" }
+      ]
     },
     {
-      category: "Frontend",
-      skills: ["React", "Next.js", "UI implementation", "performance tuning"]
+      category: "Frontend & Interactive 3D",
+      description: "Modern Responsive Web Applications & WebGL Integration",
+      skills: [
+        { name: "React 18 & Next.js", level: "Expert" },
+        { name: "Three.js / WebGL / R3F", level: "Advanced" },
+        { name: "TailwindCSS & Glassmorphic UI", level: "Expert" },
+        { name: "Framer Motion & Micro-animations", level: "Advanced" },
+        { name: "Vite & Modern Build Tooling", level: "Expert" }
+      ]
     }
   ],
   display: true
@@ -72,17 +91,18 @@ const skillsSection = {
 
 // Education Section
 const educationInfo = {
-  display: true, // Set false to hide this section, defaults to true
+  display: true,
   schools: [
     {
       schoolName: "University of Illinois Urbana-Champaign",
       logo: "/assets/images/uiucLOGO.png",
-      subHeader: "Master of Computer Science",
+      subHeader: "Master of Computer Science (MCS)",
       duration: "Expected Graduation: Dec 2026",
-      desc: "",
+      location: "Urbana-Champaign, IL",
       descBullets: [
-        "GPA: 3.6/4.0",
-        "Member, AI Alignment Illinois"
+        "GPA: 3.6 / 4.0",
+        "Member, AI Alignment Illinois & UIUC AI Alignment Lab",
+        "Focus on Multi-Agent Debate, Reasoning Reliability & AI Guardrails"
       ]
     },
     {
@@ -90,131 +110,161 @@ const educationInfo = {
       logo: "/assets/images/sjsuLOGO.png",
       subHeader: "B.S. in Computer Science",
       duration: "August 2021 - June 2025",
-      desc: "",
+      location: "San Jose, CA",
       descBullets: [
-        "GPA: 3.7/4.0",
-        "Dean's Scholar",
-        "Cum Laude"
+        "GPA: 3.7 / 4.0",
+        "Dean's Scholar & Cum Laude Honors",
+        "Specialization in Software Engineering & Machine Learning Systems"
       ]
     }
   ]
 };
 
-// Work experience section
-
+// Work Experience Section
 const workExperiences = {
-  display: true, // Set it to true to show workExperiences Section
+  display: true,
   experience: [
+    {
+      role: "Agentic AI Infrastructure Engineer",
+      company: "Agentic Awesome Skills",
+      companylogo: "/assets/images/me.png",
+      location: "Open Source / Core Contributor",
+      date: "Core Contributor · 2025 - Present",
+      url: "https://github.com/sickn33/agentic-awesome-skills",
+      descBullets: [
+        "Spearheaded backend harness architecture for **AWS/GCP + NoSQL** skill modules, standardizing cross-regional backend topologies for autonomous agent execution.",
+        "Engineered a **Hazard-Tagging (Risk Classification)** risk isolation system via automated skill testing, safeguarding database integrity against unverified AI code executions."
+      ]
+    },
     {
       role: "Machine Learning Researcher",
       company: "UIUC AI Alignment Lab",
       companylogo: "/assets/images/uiucLOGO.png",
+      location: "Urbana-Champaign, IL",
       date: "Member since Jan 2026",
-      desc: "",
+      url: "https://illinois.edu",
       descBullets: [
-        "Led and engineered a **Multi-Agent Debate** framework with role-specialized personas and **dynamic anchoring** to reduce and resolving correlated reasoning failures and consensus drift in complex reasoning tasks. ",
-        "Developed a critic-actor revision pipeline with **3D confidence scoring**, by implementing Calculate the logic score, the confidence score, and the reasoning & question alignment score to shape LLM reasoning behaviors, improving reasoning accuracy by **40%+**."
+        "Led and engineered a **Multi-Agent Debate** framework with role-specialized personas and **dynamic anchoring** to resolve correlated reasoning failures and consensus drift in complex reasoning tasks.",
+        "Developed a critic-actor revision pipeline with **3D confidence scoring** (Logic, Confidence, and Reasoning-Question Alignment scores), boosting LLM reasoning accuracy by **40%+**."
       ]
     },
     {
       role: "Co-founder · AI Model Engineer",
       company: "VideoTutor.ai",
-      companylogo: "",
+      companylogo: "/assets/images/me.png",
+      location: "San Jose, CA",
       date: "Nov 2024 - Oct 2025",
-      desc: "",
       descBullets: [
-        "Deployed a **LangChain** routing classifier to dispatch requests by query complexity, reducing model API costs by **30%**.",
-        "Designed a **Databricks + FAISS** distillation pipeline and shared-context **RAG** flow for **30K+ users**, dynamically mitigate retrieval bias and **significantly reduced latency**."
+        "Deployed a **LangChain** routing classifier to dispatch requests by query complexity, reducing model API expenditure by **30%**.",
+        "Designed a **Databricks + FAISS** distillation pipeline and shared-context **RAG** flow for **30K+ users**, dynamically mitigating retrieval bias and drastically reducing latency."
       ]
     },
     {
       role: "LLM Infrastructure Engineer",
       company: "CollegeBot.ai",
       companylogo: "/assets/images/collegebotLOGO.avif",
+      location: "Sponsored by Kimi.ai",
       date: "Jan 2024 - Oct 2024",
-      desc: "Sponsored by Kimi.ai",
       descBullets: [
-        "Developed a **Milvus-backed stateful memory engine** for persona-specific context across long-form agent interactions. Minimized storage spending, eliminated semantic drift.",
-        "Optimized task decomposition, function calling, and orchestration flows to improve reliability on complex instructions."
+        "Developed a **Milvus-backed stateful memory engine** for persona-specific context across long-form agent interactions, eliminating semantic drift.",
+        "Optimized task decomposition, function calling, and multi-step orchestration flows to guarantee reliable agent execution."
       ]
     },
     {
       role: "Software Engineer Intern",
       company: "TRIPALINK",
       companylogo: "/assets/images/Tripalink.png",
+      location: "Los Angeles, CA",
       date: "Jun 2023 - Aug 2023",
-      desc: "",
       descBullets: [
-        "Architected **Java / Spring Boot** microservices and **GraphQL / REST APIs** on **AWS EKS (Kubernetes)** to accelerate tenant-analysis workflows by **80%**.",
-        "Improved retrieval performance with **Redis** and **PostgreSQL** indexing, reducing data-access latency by **25%**.",
-        "Maintained **CI/CD** and end-to-end testing workflows with **Jenkins, Maven, and Postman**, reducing manual deployment overhead by **80%**."
+        "Architected **Java / Spring Boot** microservices and **GraphQL / REST APIs** on **AWS EKS (Kubernetes)**, accelerating tenant-analysis workflows by **80%**.",
+        "Optimized query performance with **Redis** and **PostgreSQL** indexing, reducing data-access latency by **25%**.",
+        "Maintained **CI/CD** pipelines with **Jenkins, Maven, and Postman**, cutting manual deployment overhead by **80%**."
       ]
     },
     {
       role: "Volunteer Software Engineer",
       company: "The Rabbit Haven",
       companylogo: "/assets/images/therabbithavenLOGO.png",
+      location: "San Jose, CA",
       date: "Nov 2022 - May 2023",
-      desc: "",
       descBullets: [
-        "Rebuilt the **React** portal and digitized adoption workflows for non-technical shelter staff, automating Python-based **ETL** synchronization into **MySQL** and saving about **35 minutes** per adoption task.",
-        "Implemented Pessimistic Locking, guaranteeing transactional **ACID** correctness and preventing data anomalies under high-concurrency traffic."
+        "Rebuilt the **React** shelter portal and digitized adoption workflows, automating Python **ETL** synchronization into **MySQL** and saving ~**35 minutes** per task.",
+        "Implemented Pessimistic Locking to guarantee transactional **ACID** correctness under concurrent shelter traffic."
       ]
     }
   ]
 };
 
-// Some big projects you have worked on
-
+// Featured Projects & Research Showcase
 const bigProjects = {
-  title: "Selected Works",
+  title: "Selected Works & Agentic Projects",
   subtitle: "SOFTWARE ENGINEERING & AI RESEARCH",
   featuredProjects: [
     {
-      projectName: "Antigravity Awesome Skills",
-      subtitle: "Core Contributor",
-      featuredSummary: "Core contributor focused on **backend harness engineering** and **hazard-tagging** for safer skill execution.",
+      projectName: "Agentic Awesome Skills",
+      image: "/assets/images/me.png",
+      subtitle: "Core Contributor · Open Source",
+      featuredSummary: "A production-grade **Agentic Skill Harness** and risk-governance standard powering autonomous coding agents.",
       descBullets: [
-        "Spearheaded backend harness architecture for **AWS/GCP + NoSQL** skill modules, helping standardize cross-regional backend topologies.",
-        "Leading and engineered a **Hazard-Tagging (Risk Classification)** system via rigorous skill testing, safeguarding database integrity against unverified AI-generated code executions."
+        "Architected standardized skill interfaces for **AWS, GCP, and NoSQL** agent execution environments.",
+        "Engineered an automated **Hazard-Tagging (Risk Classification)** system to prevent unverified code mutations."
       ],
-      stack: ["Open Source", "Design", "Agentic Coding"],
+      stack: ["Agentic AI", "Open Source", "Security Harness", "TypeScript"],
       footerLink: [
         {
-          name: "View GitHub repo",
-          url: "https://github.com/sickn33/antigravity-awesome-skills"
+          name: "View GitHub Repo (44.0k+ ⭐)",
+          url: "https://github.com/sickn33/agentic-awesome-skills"
         }
       ]
     },
     {
-      projectName: "Multimodal Sentiment Analysis System",
-      featuredSummary: "Real-time multimodal sentiment analysis pipeline optimized for low-latency streaming inference.",
+      projectName: "Helper Bob: LLM Infrastructure",
+      image: "/assets/images/helperbobLOGO.svg",
+      subtitle: "LLM Orchestration & Prompt Layer",
+      featuredSummary: "Advanced **Prompt Engineering and Orchestration Layer** designed to eliminate conversational semantic drift in complex multi-step reasoning.",
       descBullets: [
-        "Built a **VAD-gated FastAPI/WebSocket** pipeline for live multimodal inference.",
-        "Applied **Int8 quantization** and **entropy-based fusion** to keep latency below **300ms**.",
-        "Reached **85%** multimodal accuracy while maintaining real-time responsiveness."
+        "Published customized LLM inference model weights on HuggingFace Hub.",
+        "Implemented dynamic context compression and multi-step function calling guardrails."
       ],
-      stack: ["Python", "PyTorch", "CNN", "HuBERT"],
+      stack: ["LLM Infrastructure", "HuggingFace", "Python", "Prompt Engineering"],
       footerLink: [
         {
-          name: "View GitHub repo",
+          name: "Open HuggingFace Model",
+          url: "https://huggingface.co/Ian332/Helper_Bob"
+        }
+      ]
+    },
+    {
+      projectName: "Multimodal Sentiment Analysis System (Lite-MSA)",
+      image: "/assets/images/me.png",
+      subtitle: "Real-time Multimodal AI Pipeline",
+      featuredSummary: "Real-time multimodal sentiment analysis pipeline optimized for **low-latency streaming inference**.",
+      descBullets: [
+        "Built a **VAD-gated FastAPI/WebSocket** pipeline for live audio-visual streaming inference.",
+        "Applied **Int8 quantization** and entropy-based fusion to maintain sub-**300ms** latency at **85%** multimodal accuracy."
+      ],
+      stack: ["Python", "PyTorch", "FastAPI", "WebSocket", "HuBERT"],
+      footerLink: [
+        {
+          name: "View GitHub Repo",
           url: "https://github.com/IanJ332/Lite-MSA-Stream"
         }
       ]
     },
     {
-      projectName: "BakeWise",
+      projectName: "BakeWise: AI Fermentation Assistant",
       image: "/assets/images/bake wise.png",
-      featuredSummary: "A **True AI Fermentation assistant** built with **Kotlin (MVVM)** and **FastAPI**, combining a custom scheduling system with Gemini-based analysis.",
+      subtitle: "IoT & Gemini AI Ecosystem",
+      featuredSummary: "A **True AI Fermentation Assistant** built with **Kotlin (MVVM)** and **FastAPI**, pairing real-time IoT tracking with Gemini-based reasoning.",
       descBullets: [
-        "Architected a full-stack IoT tracking ecosystem with **Kotlin (MVVM)** and **FastAPI** for guided fermentation workflows.",
-        "Integrated a custom **backward-scheduling algorithm** and the **Gemini API** for real-time fermentation analysis.",
-        "Designed a **Harness Security Architecture** to sandbox AI outputs, establishing a secure **AI development flow** and leveraging **GitHub Copilot + Jira/Linear** for rapid team state synchronization. "
+        "Architected an IoT tracking app with **Kotlin (MVVM)** and **FastAPI** for guided fermentation workflows.",
+        "Integrated a custom **backward-scheduling algorithm** and Gemini API for real-time sourdough analysis."
       ],
-      stack: ["Kotlin", "Android", "MVVM"],
+      stack: ["Kotlin", "Android MVVM", "FastAPI", "Gemini API"],
       footerLink: [
         {
-          name: "View GitHub repo",
+          name: "View GitHub Repo",
           url: "https://github.com/IanJ332/BakeWise"
         }
       ]
@@ -224,80 +274,66 @@ const bigProjects = {
     {
       projectName: "Sign Language Recognition",
       image: "/assets/images/how2signlogo.png",
-      description: "Automated hyperparameter tuning for a MobileNetV2 + CNN-LSTM backbone via Bayesian Optimization, reaching 98.4% accuracy.",
-      stack: ["Python", "TensorFlow", "Optuna"],
+      description: "Automated hyperparameter tuning for a MobileNetV2 + CNN-LSTM backbone via Bayesian Optimization, achieving 98.4% accuracy.",
+      stack: ["Python", "TensorFlow", "Optuna", "CNN-LSTM"],
       footerLink: [
         {
-          name: "View GitHub repo",
+          name: "View GitHub Repo",
           url: "https://github.com/IanJ332/Sign_language_translator"
         }
       ]
     },
     {
-      projectName: "Helper Bob: LLM Infrastructure",
-      image: "/assets/images/helperbobLOGO.svg",
-      description: "Advanced Prompt Engineering and Orchestration Layer to minimize conversational drift.",
-      stack: ["LLM", "System Design"],
-      footerLink: [
-        {
-          name: "Open HuggingFace Model",
-          url: "https://huggingface.co/Ian332/Helper_Bob"
-        }
-      ]
-    },
-    {
       projectName: "MAD: Majority Error Debate",
-      description: "A novel critic-actor architecture enhancing LLM accuracy against minority agent hallucination positions.",
-      stack: ["LLM", "Research", "Python"],
+      image: "/assets/images/uiucLOGO.png",
+      description: "A novel critic-actor multi-agent architecture countering majority agent hallucination positions in complex reasoning benchmarks.",
+      stack: ["LLM Research", "Multi-Agent Debate", "Python"],
       footerLink: [
         {
-          name: "View GitHub repo",
+          name: "View GitHub Repo",
           url: "https://github.com/nilgeoutim/CS546_MajorityErrorDebate"
         },
         {
-          name: "View Paper",
+          name: "Read Paper PDF",
           url: "https://github.com/nilgeoutim/CS546_MajorityErrorDebate/blob/main/CS546_GP.pdf"
         }
       ]
     },
     {
-      projectName: "Liquidity: Bank Simulation",
-      description: "Robust financial platform with Next.js/Supabase handling atomic transactions and real-time updates.",
-      stack: ["Next.js", "Supabase", "PostgreSQL"],
+      projectName: "Liquidity: Financial Bank Platform",
+      image: "/assets/images/me.png",
+      description: "High-concurrency financial platform built with Next.js & Supabase, guaranteeing atomic ACID transactions and live updates.",
+      stack: ["Next.js", "Supabase", "PostgreSQL", "Realtime"],
       footerLink: [
         {
-          name: "View GitHub repo",
+          name: "View GitHub Repo",
           url: "https://github.com/ehcaw/Liquidity"
         }
       ]
     }
-    // Note: Kimi.ai project entry removed to avoid double-counting experience
   ],
   display: true
 };
 
 // Blogs Section
-
 const blogSection = {
-  title: "Blogs",
-  subtitle:
-    "Sharing insights on AI, optimization, and technology trends through in-depth articles.",
-  displayMediumBlogs: true, // 将其设置为布尔值 true
+  title: "Blogs & Technical Writing",
+  subtitle: "In-depth research on AI reasoning, hardware optimization, and model architectures.",
+  displayMediumBlogs: true,
   blogs: [
     {
       url: "https://medium.com/@jiangjs03/the-quest-for-true-ai-reasoning-data-driven-approaches-and-extreme-hardware-optimization-1797a4b0bf47",
       title: "The Quest for True AI Reasoning: Data-Driven Approaches and Extreme Hardware Optimization",
       description:
-        "Exploring the current limitations of AI reasoning, the role of data-driven methods, and how extreme hardware optimization could be the key to unlocking truly intelligent systems."
+        "Exploring current LLM reasoning limitations, the role of data-driven multi-agent protocols, and how hardware optimization unlocks next-generation AI reasoning capabilities."
     }
   ],
-  display: true // Set false to hide this section, defaults to true
+  display: true
 };
 
 const contactInfo = {
-  title: emoji("Contact Me ☎️"),
-  subtitle:
-    "Discuss a project or just want to say hi? My inbox is open for all.",
+  title: emoji("Get in Touch ☎️"),
+  subtitle: "Open for machine learning engineering, backend systems, and research opportunities.",
   email_address: "jiangjs03@gmail.com"
 };
 

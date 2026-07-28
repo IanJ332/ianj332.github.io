@@ -1,49 +1,114 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { skillsSection } from '../data/portfolio';
+import { Cpu, Server, Database, Layout } from 'lucide-react';
+import TiltCard from './TiltCard';
 
-const ExpertiseSection = () => {
-    return (
-        <section id="expertise" className="py-8 md:py-12 relative border-t border-[var(--border-dim)] bg-[var(--bg-main)]">
-            <div className="container mx-auto px-6 md:px-8">
-                <div className="max-w-6xl mx-auto">
-                    <div className="flex items-baseline gap-4 mb-8">
-                        <span className="font-mono text-sm text-[var(--text-dim)]/30">03</span>
-                        <h2 className="text-sm font-mono uppercase tracking-[0.2em] text-[var(--text-dim)]/60">{skillsSection.title}</h2>
+const EASE = [0.16, 1, 0.3, 1];
+const VIEWPORT = { once: true, margin: '-60px' };
+
+const categoryConfig = {
+    'AI Systems & Infrastructure': { icon: Cpu, accent: '#6366f1' },
+    'Backend & Cloud Architecture': { icon: Server, accent: '#0891b2' },
+    'Data Engineering & Storage': { icon: Database, accent: '#059669' },
+    'Frontend & Interactive 3D': { icon: Layout, accent: '#d97706' },
+};
+
+const FALLBACK = { icon: Cpu, accent: '#6366f1' };
+
+const cardVariants = {
+    hidden: { opacity: 0, y: 24 },
+    visible: (i) => ({
+        opacity: 1,
+        y: 0,
+        transition: { duration: 0.65, delay: i * 0.09, ease: EASE },
+    }),
+};
+
+const ExpertiseSection = () => (
+    <section id="expertise" className="py-24 md:py-36 relative">
+        <div className="container mx-auto px-6 md:px-12">
+            {/* Content sits RIGHT — the avatar takes the left half in this section. */}
+            <div className="lg:ml-auto lg:max-w-[56%]">
+                <motion.div
+                    className="flex items-end gap-5 mb-10"
+                    initial={{ opacity: 0, y: 20 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={VIEWPORT}
+                    transition={{ duration: 0.7, ease: EASE }}
+                >
+                    <span className="section-number">03</span>
+                    <div className="pb-2 flex-1">
+                        <span className="section-label">{skillsSection.title}</span>
+                        <div className="section-rule mt-3" />
                     </div>
+                </motion.div>
 
-                    <p className="text-base md:text-lg text-[var(--text-dim)]/80 max-w-3xl mb-12 font-body leading-relaxed">
-                        {skillsSection.introText}
-                    </p>
+                <motion.p
+                    className="text-body text-[var(--text-dim)] max-w-lg mb-10"
+                    initial={{ opacity: 0, y: 16 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={VIEWPORT}
+                    transition={{ duration: 0.6, delay: 0.1, ease: EASE }}
+                >
+                    {skillsSection.introText}
+                </motion.p>
 
-                    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-x-8 gap-y-10">
-                        {skillsSection.softwareSkills.map((group, index) => (
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    {skillsSection.softwareSkills.map((group, index) => {
+                        const config = categoryConfig[group.category] || FALLBACK;
+                        const Icon = config.icon;
+
+                        return (
                             <motion.div
                                 key={index}
-                                initial={{ opacity: 0, y: 15 }}
-                                whileInView={{ opacity: 1, y: 0 }}
-                                viewport={{ once: true }}
-                                transition={{ delay: index * 0.1 }}
-                                className="flex flex-col"
+                                custom={index}
+                                variants={cardVariants}
+                                initial="hidden"
+                                whileInView="visible"
+                                viewport={VIEWPORT}
                             >
-                                <h3 className="font-body font-semibold text-[var(--text-main)] mb-4 border-b border-[var(--border-dim)] pb-2 text-sm uppercase tracking-wide">
-                                    {group.category}
-                                </h3>
-                                <ul className="flex flex-col gap-2">
-                                    {group.skills.map((skill, i) => (
-                                        <li key={i} className="text-[var(--text-dim)]/80 text-[15px] font-body flex items-center gap-2">
-                                            <span className="w-1 h-1 bg-indigo-500/40 rounded-full"></span>
-                                            {skill}
-                                        </li>
-                                    ))}
-                                </ul>
+                                {/* Inner TiltCard owns the transform — framer's
+                                    settled inline transform on the outer element
+                                    would otherwise fight a live tilt. */}
+                                <TiltCard className="glass-panel p-5 md:p-6 h-full flex flex-col" max={7}>
+                                    <div className="flex items-center gap-3 mb-1.5">
+                                        <span
+                                            className="w-8 h-8 rounded-lg flex items-center justify-center shrink-0 border"
+                                            style={{
+                                                background: `color-mix(in srgb, ${config.accent} 12%, transparent)`,
+                                                borderColor: `color-mix(in srgb, ${config.accent} 30%, transparent)`,
+                                            }}
+                                        >
+                                            <Icon size={15} style={{ color: config.accent }} />
+                                        </span>
+                                        <h3 className="text-display-light text-[14.5px] text-[var(--text-main)]">
+                                            {group.category}
+                                        </h3>
+                                    </div>
+
+                                    <p className="text-body text-[12px] text-[var(--text-faint)] mb-5 leading-[1.6]">
+                                        {group.description}
+                                    </p>
+
+                                    <div className="flex flex-wrap gap-1.5 mt-auto">
+                                        {group.skills.map((skill, i) => {
+                                            const name = typeof skill === 'string' ? skill : skill.name;
+                                            return (
+                                                <span key={i} className="skill-tag">
+                                                    {name}
+                                                </span>
+                                            );
+                                        })}
+                                    </div>
+                                </TiltCard>
                             </motion.div>
-                        ))}
-                    </div>
+                        );
+                    })}
                 </div>
             </div>
-        </section>
-    );
-};
+        </div>
+    </section>
+);
 
 export default ExpertiseSection;

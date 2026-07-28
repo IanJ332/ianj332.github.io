@@ -1,47 +1,46 @@
 import http.server
 import socketserver
 import os
-import urllib.parse
 import sys
 
 PORT = int(sys.argv[1]) if len(sys.argv) > 1 else 3000
-DIRECTORY = "v3.0-site"
+DIRECTORY = "dist"
 
-class CustomHandler(http.server.SimpleHTTPRequestHandler):
+class SPAHandler(http.server.SimpleHTTPRequestHandler):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, directory=DIRECTORY, **kwargs)
 
     def translate_path(self, path):
-        translated = super().translate_path(path)
-        if os.path.exists(translated):
-            return translated
-        
-        # Try unquoting / quoting variants for Next.js encoded dynamic route paths (e.g. %5Bslug%5D vs [slug])
-        raw_path = self.path.split('?')[0]
-        
-        # Try relative to DIRECTORY directly
+        # Strip query parameters
+        raw_path = path.split('?')[0].split('#')[0]
         clean_rel = raw_path.lstrip('/')
-        dir_path1 = os.path.join(DIRECTORY, clean_rel)
-        if os.path.exists(dir_path1):
-            return os.path.abspath(dir_path1)
+        
+        # Build absolute path inside DIRECTORY
+        full_path = os.path.abspath(os.path.join(os.getcwd(), DIRECTORY, clean_rel))
 
-        unquoted_rel = urllib.parse.unquote(clean_rel)
-        dir_path2 = os.path.join(DIRECTORY, unquoted_rel)
-        if os.path.exists(dir_path2):
-            return os.path.abspath(dir_path2)
+        # Check if file or index.html exists
+        if os.path.isdir(full_path):
+            index = os.path.join(full_path, "index.html")
+            if os.path.exists(index):
+                return index
+        elif os.path.exists(full_path):
+            return full_path
 
-        quoted_rel = clean_rel.replace('[', '%5B').replace(']', '%5D')
-        dir_path3 = os.path.join(DIRECTORY, quoted_rel)
-        if os.path.exists(dir_path3):
-            return os.path.abspath(dir_path3)
-
-        return translated
+        # SPA Fallback to index.html for client-side routing
+        return os.path.abspath(os.path.join(os.getcwd(), DIRECTORY, "index.html"))
 
 if __name__ == "__main__":
     root_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
     os.chdir(root_dir)
+    
+    # Ensure dist folder exists
+    dist_dir = os.path.join(root_dir, DIRECTORY)
+    if not os.path.exists(dist_dir):
+        print("dist directory missing. Building Vite bundle...")
+        os.system("npm run build")
+
     socketserver.TCPServer.allow_reuse_address = True
-    with socketserver.TCPServer(("", PORT), CustomHandler) as httpd:
+    with socketserver.TCPServer(("", PORT), SPAHandler) as httpd:
         print("==================================================")
         print(" Starting v3.0 3D Portfolio Local Server")
         print(f" Serving directory: {DIRECTORY}")

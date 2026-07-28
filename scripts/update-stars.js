@@ -4,7 +4,7 @@ import { fileURLToPath } from 'url';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const PUBLIC_DIR = path.join(__dirname, '../public');
-const REPO = 'sickn33/antigravity-awesome-skills';
+const REPO = 'sickn33/agentic-awesome-skills';
 
 async function updateStars() {
     try {

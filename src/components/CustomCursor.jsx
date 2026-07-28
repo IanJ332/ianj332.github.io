@@ -13,15 +13,21 @@ const CustomCursor = () => {
         };
 
         const handleMouseOver = (e) => {
-            const target = e.target;
-            const isLink = target.tagName === 'A' || target.closest('a');
-            const isButton = target.tagName === 'BUTTON' || target.closest('button');
-            const isClickable = target.classList.contains('cursor-pointer') || target.closest('.cursor-pointer');
+            try {
+                const target = e.target;
+                if (!target) return;
+                
+                const isLink = target.tagName === 'A' || (target.closest && target.closest('a'));
+                const isButton = target.tagName === 'BUTTON' || (target.closest && target.closest('button'));
+                const isClickable = (target.classList && typeof target.classList.contains === 'function' && target.classList.contains('cursor-pointer')) || (target.closest && target.closest('.cursor-pointer'));
 
-            if (isLink || isButton || isClickable) {
-                setIsHovering(true);
-            } else {
-                setIsHovering(false);
+                if (isLink || isButton || isClickable) {
+                    setIsHovering(true);
+                } else {
+                    setIsHovering(false);
+                }
+            } catch (err) {
+                // Ignore DOM query errors on unusual SVG nodes
             }
         };
 
