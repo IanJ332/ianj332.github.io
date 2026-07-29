@@ -1,23 +1,47 @@
 <!doctype html>
-<html lang="en">
-
+<html lang="en" class="dark">
 <head>
   <meta charset="UTF-8" />
   <link rel="icon" type="image/png" href="/assets/images/me.png" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <!-- Google Fonts Preconnect -->
+  <meta name="description" content="Ian Jiang | ML Engineer & Software Engineer Portfolio" />
+  <meta name="theme-color" content="#07070B" media="(prefers-color-scheme: dark)" />
+  <meta name="theme-color" content="#F5F2EB" media="(prefers-color-scheme: light)" />
+  <script>
+    // Apply the stored theme before first paint so light-mode users never see
+    // a dark flash (and vice versa).
+    (function () {
+      try {
+        var t = localStorage.getItem('portfolio-theme') || 'dark';
+        document.documentElement.classList.toggle('dark', t === 'dark');
+        document.documentElement.setAttribute('data-theme', t);
+      } catch (e) { /* private mode — fall back to the default dark class */ }
+    })();
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.getRegistrations().then(function(registrations) {
+        for(let registration of registrations) {
+          registration.unregister();
+        }
+      });
+    }
+  </script>
+  <!-- The 10 MB avatar GLB is the page's real long pole. Without this hint it
+       only starts downloading after the lazy WebGL chunk has been fetched,
+       parsed and executed — this starts the stream at t=0 instead. -->
+  <link rel="preload" href="/models/avatar.glb" as="fetch" type="model/gltf-binary" crossorigin>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="preload" href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300..700&display=swap" as="style">
   <link
-    href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&family=Playfair+Display:ital,wght@0,400..900;1,400..900&family=JetBrains+Mono:wght@100..800&display=swap"
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&family=Space+Grotesk:wght@300..700&family=JetBrains+Mono:ital,wght@0,100..800;1,100..800&display=swap"
     rel="stylesheet">
-  <title>Ian Jiang | Software Engineer</title>
-  <script type="module" crossorigin src="/assets/index-Ve59UPdx.js"></script>
-  <link rel="stylesheet" crossorigin href="/assets/index-CeZsvKix.css">
+  <title>Ian Jiang | ML Engineer & Software Engineer</title>
+  <script type="module" crossorigin src="/assets/index-Bsi8rgmZ.js"></script>
+  <link rel="modulepreload" crossorigin href="/assets/react-CjXtRb-8.js">
+  <link rel="modulepreload" crossorigin href="/assets/motion-6bh6by0c.js">
+  <link rel="stylesheet" crossorigin href="/assets/index-BvZEVCJd.css">
 </head>
-
-<body class="bg-gunmetal text-offwhite antialiased">
-  <div id="root"></div>
+<body class="antialiased">
+  <div id="root"></div>
 </body>
-
 </html>
