@@ -121,6 +121,26 @@ const educationInfo = {
 };
 
 // Work Experience Section
+//
+// ── ENTRY TEMPLATE ──────────────────────────────────────────────────────────
+// Card layout is fixed. Keep every entry filling the same slots, in this order:
+//
+//   {
+//     role: "Job Title",                 // rendered as the card heading
+//     company: "Organisation",           // rendered under the role as "@ Company"
+//     companylogo: "/assets/images/x.png", // falls back to me.png if unavailable
+//     location: "City, ST",              // TOP-RIGHT, prefixed with a pin icon.
+//                                        // Place ONLY. Use "Remote" / "Remote · Open Source"
+//                                        // when there is no office. Never put a role,
+//                                        // sponsor or team name here.
+//     date: "Mon YYYY - Mon YYYY",       // TOP-LEFT pill. Ongoing roles: "Mon YYYY - Present"
+//                                        // or "Since Mon YYYY". Dates only — no role text.
+//     url: "https://...",                // optional; turns "@ Company" into a link
+//     descBullets: [                     // 2-4 bullets, impact-first, **bold** for
+//       "**Verb phrase** ... metric.",   // key terms and metrics (only ** is parsed;
+//     ]                                  // backticks and other markdown render literally)
+//   }
+// ────────────────────────────────────────────────────────────────────────────
 const workExperiences = {
   display: true,
   experience: [
@@ -128,22 +148,22 @@ const workExperiences = {
       role: "Software Engineer",
       company: "ThePaddock",
       companylogo: "/assets/images/paddockLOGO.png",
-      location: "Social Platform Infrastructure",
+      location: "Remote",
       date: "May 2026 - Present",
       url: "https://apps.apple.com/us/app/thepaddock/id6757203697",
       descBullets: [
-        "Architected a **database-first composite keyset pagination** pipeline across **PostgreSQL / Supabase** and **Flutter**, combining CTE-based mutual-follow enrichment, **is_mutual / created_at** seek predicates, and partial indexes to eliminate pagination drift, duplicate records, and full-list memory loading.",
-        "Collapsed follower and following metrics onto **zero-payload count APIs**, replacing client-side full-row aggregation with exact **Content-Range** head queries and zero-row limits — cutting response payload from **67.3 kB to 0.2 kB (99.7% reduction)** across profile, onboarding, and feed render paths.",
-        "Hardened the social-service backend into a **deterministic test harness**: **SECURITY INVOKER** RPCs, pinned PostgreSQL search paths, RLS-aware isolation, baseline-delta assertions, and deterministic cursor fixtures, delivering **46/46 passing tests** over pagination, privacy-state, aggregation, and concurrency scenarios.",
-        "Ran an **eval-driven agentic loop** spanning implementation, static analysis, and human validation, surfacing latent unpaginated count queries, timestamp-collision flakiness, and RLS cleanup failures, then converting each finding into targeted remediation and production-ready pull requests."
+        "**Built a database-first social graph pipeline** across **PostgreSQL, Supabase, and Flutter** using composite keyset pagination, database-side mutual-follow ranking, and partial indexes to keep infinite scroll stable under concurrent follow/unfollow updates.",
+        "**Replaced client-side list aggregation with zero-row exact-count queries**, reducing follower/following payloads from 67.3 kB to 0.2 kB (**99.7% reduction**).",
+        "**Hardened the service with deterministic, RLS-aware integration testing and AI-assisted code review**, catching pagination drift, timestamp-collision flakiness, and state-isolation bugs before merge.",
+        "**Owned the platform-wide evolution from a car-centric domain model to a multi-vehicle architecture**, extending the vehicle taxonomy and data ingestion/merge pipeline for motorcycles, resolving cross-layer schema and dependency constraints, and shipping end-to-end motorcycle support across the app."
       ]
     },
     {
       role: "Agentic AI Infrastructure Engineer",
       company: "Agentic Awesome Skills",
       companylogo: "/assets/images/me.png",
-      location: "Open Source / Core Contributor",
-      date: "Core Contributor · 2025 - Present",
+      location: "Remote · Open Source",
+      date: "2025 - Present",
       url: "https://github.com/sickn33/agentic-awesome-skills",
       descBullets: [
         "Spearheaded backend harness architecture for **AWS/GCP + NoSQL** skill modules, standardizing cross-regional backend topologies for autonomous agent execution.",
@@ -155,7 +175,7 @@ const workExperiences = {
       company: "UIUC AI Alignment Lab",
       companylogo: "/assets/images/uiucLOGO.png",
       location: "Urbana-Champaign, IL",
-      date: "Member since Jan 2026",
+      date: "Since Jan 2026",
       url: "https://illinois.edu",
       descBullets: [
         "Led and engineered a **Multi-Agent Debate** framework with role-specialized personas and **dynamic anchoring** to resolve correlated reasoning failures and consensus drift in complex reasoning tasks.",
@@ -177,7 +197,7 @@ const workExperiences = {
       role: "LLM Infrastructure Engineer",
       company: "CollegeBot.ai",
       companylogo: "/assets/images/collegebotLOGO.avif",
-      location: "Sponsored by Kimi.ai",
+      location: "Remote",
       date: "Jan 2024 - Oct 2024",
       descBullets: [
         "Developed a **Milvus-backed stateful memory engine** for persona-specific context across long-form agent interactions, eliminating semantic drift.",

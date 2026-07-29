@@ -8,7 +8,7 @@ import {
     contactInfo,
     educationInfo,
 } from './data/portfolio';
-import { Github, Linkedin, Mail, ArrowRight, ExternalLink, Sun, Moon, ArrowDown } from 'lucide-react';
+import { Github, Linkedin, Mail, ArrowRight, ExternalLink, Sun, Moon, ArrowDown, MapPin } from 'lucide-react';
 import ExpertiseSection from './components/ExpertiseSection';
 import FloatingBadges from './components/FloatingBadges';
 import CustomCursor from './components/CustomCursor';
@@ -474,7 +474,8 @@ const ExperienceSection = () => (
                                 <div className="flex flex-wrap items-center justify-between gap-2 mb-4">
                                     <span className="meta-pill meta-pill-accent">{exp.date}</span>
                                     {exp.location && (
-                                        <span className="text-code text-[10px] text-[var(--text-faint)]">
+                                        <span className="inline-flex items-center gap-1.5 text-code text-[10px] text-[var(--text-faint)]">
+                                            <MapPin size={11} className="shrink-0 opacity-70" />
                                             {exp.location}
                                         </span>
                                     )}
