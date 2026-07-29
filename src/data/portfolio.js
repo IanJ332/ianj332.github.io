@@ -148,7 +148,7 @@ const workExperiences = {
       role: "Software Engineer",
       company: "ThePaddock",
       companylogo: "/assets/images/paddockLOGO.png",
-      location: "Remote",
+      location: "Santa Clara, CA",
       date: "May 2026 - Present",
       url: "https://apps.apple.com/us/app/thepaddock/id6757203697",
       descBullets: [
@@ -185,9 +185,10 @@ const workExperiences = {
     {
       role: "Co-founder · AI Model Engineer",
       company: "VideoTutor.ai",
-      companylogo: "/assets/images/me.png",
+      companylogo: "/assets/images/videotutorLOGO.png",
       location: "San Jose, CA",
       date: "Nov 2024 - Oct 2025",
+      url: "https://videotutor.io/en",
       descBullets: [
         "Deployed a **LangChain** routing classifier to dispatch requests by query complexity, reducing model API expenditure by **30%**.",
         "Designed a **Databricks + FAISS** distillation pipeline and shared-context **RAG** flow for **30K+ users**, dynamically mitigating retrieval bias and drastically reducing latency."
@@ -197,9 +198,11 @@ const workExperiences = {
       role: "LLM Infrastructure Engineer",
       company: "CollegeBot.ai",
       companylogo: "/assets/images/collegebotLOGO.avif",
-      location: "Remote",
+      location: "San Jose, CA",
       date: "Jan 2024 - Oct 2024",
+      url: "https://collegebot.ai/",
       descBullets: [
+        "Built the LLM infrastructure for a **Kimi.ai-sponsored** admissions assistant, owning retrieval, memory, and orchestration across the agent stack.",
         "Developed a **Milvus-backed stateful memory engine** for persona-specific context across long-form agent interactions, eliminating semantic drift.",
         "Optimized task decomposition, function calling, and multi-step orchestration flows to guarantee reliable agent execution."
       ]
