@@ -121,16 +121,29 @@ const MOBILE_POSES = {
 /* ═══════════════════════════════════════════════════════════
    ERROR BOUNDARY
    ═══════════════════════════════════════════════════════════ */
+/* Retries twice before giving up: a transient GLB fetch failure or a GPU
+   hiccup should cost a couple of seconds, not the whole visit. useGLTF
+   caches a REJECTED load too, so the cache must be cleared before the
+   remount or the retry just rethrows the memoised error. */
 class CanvasErrorBoundary extends Component {
     constructor(props) {
         super(props);
-        this.state = { hasError: false };
+        this.state = { hasError: false, attempt: 0 };
     }
     static getDerivedStateFromError() {
         return { hasError: true };
     }
     componentDidCatch(error, errorInfo) {
-        console.warn('3D Avatar Canvas WebGL Warning:', error, errorInfo);
+        console.warn('3D Avatar Canvas error (attempt', this.state.attempt + 1, '):', error, errorInfo);
+        if (this.state.attempt < 2) {
+            useGLTF.clear(MODEL_URL);
+            this.retryTimer = setTimeout(() => {
+                this.setState((s) => ({ hasError: false, attempt: s.attempt + 1 }));
+            }, 2500);
+        }
+    }
+    componentWillUnmount() {
+        clearTimeout(this.retryTimer);
     }
     render() {
         return this.state.hasError ? null : this.props.children;

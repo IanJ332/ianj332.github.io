@@ -18,8 +18,29 @@ import { formatText } from './utils/formatText';
 /* Three.js + drei + postprocessing are ~850 kB of the bundle and none of it is
    needed to paint the first screen. Splitting the canvas behind React.lazy
    keeps the initial chunk to React + framer-motion, so the hero text and glass
-   panels (the LCP candidates) render while the 3D scene streams in. */
-const FullscreenAvatarCanvas = lazy(() => import('./components/AvatarCanvas'));
+   panels (the LCP candidates) render while the 3D scene streams in.
+
+   The .catch handles the classic stale-deploy failure: a tab opened before a
+   redeploy holds an index that references the OLD hashed chunk, the dynamic
+   import 404s, and the avatar silently never mounts. One automatic reload
+   picks up the fresh index; the sessionStorage guard stops a reload loop if
+   the chunk is genuinely unreachable. */
+const FullscreenAvatarCanvas = lazy(() =>
+    import('./components/AvatarCanvas')
+        .then((m) => {
+            sessionStorage.removeItem('avatar-chunk-reloaded');
+            return m;
+        })
+        .catch((err) => {
+        if (!sessionStorage.getItem('avatar-chunk-reloaded')) {
+            sessionStorage.setItem('avatar-chunk-reloaded', '1');
+            window.location.reload();
+        }
+        console.error('3D avatar chunk failed to load:', err);
+        // Render nothing where the canvas would go; the page stays usable.
+        return { default: () => null };
+    })
+);
 
 /* Painted immediately, with no JS dependencies, so the viewport is never blank
    while the WebGL chunk downloads. Must match --bg-main and the stage wash in
