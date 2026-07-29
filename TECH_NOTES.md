@@ -84,8 +84,8 @@ for routine content changes.
   role: "Software Engineer Intern",
   company: "Acme",
   companylogo: "/assets/images/acmeLOGO.png",   // in public/assets/images/
-  date: "May 2026 – Aug 2026",
-  location: "Remote",                            // optional
+  location: "Santa Clara, CA",                   // TOP-RIGHT, pin icon prefixed
+  date: "May 2026 - Aug 2026",                   // TOP-LEFT pill
   url: "https://acme.com",                       // optional — links the @company line
   descBullets: [
     "Shipped **thing** that did X",              // **bold** is rendered via formatText
@@ -93,8 +93,19 @@ for routine content changes.
 }
 ```
 
+**Card metadata is uniform — keep it that way.** The header row is always
+`date` (left pill) + `location` (right, with pin icon):
+
+- `location` is a **place only** — "City, ST", "Remote", or "Remote · Open
+  Source". Never a role, team, sponsor or funding note; those belong in
+  `descBullets`.
+- `date` is **dates only** — `"Mon YYYY - Mon YYYY"`, `"Mon YYYY - Present"`,
+  or `"Since Mon YYYY"` for open-ended memberships. No role text.
+
 Order in the array = order on the page (top = most recent). Logos are white-
 plated automatically; a missing/broken logo falls back to the company initial.
+The same field templates are mirrored as comment blocks in `portfolio.js`
+above each section — update both if the schema changes.
 
 ### Skills (`skillsSection.softwareSkills[]`)
 
@@ -106,10 +117,14 @@ a new category, or it falls back to the CPU icon + indigo.
 
 ### Projects (`bigProjects`)
 
-- `featuredProjects[]` — big cards. `stack[]` renders as tags,
-  `footerLink[]` as arrow links. The project named `"Agentic Awesome Skills"`
-  automatically shows the live GitHub star count (see §4, star automation).
-- `otherProjects[]` — compact grid cards; only `stack[0]` is shown.
+- `featuredProjects[]` — big cards. `subtitle` renders as a small mono line
+  under the project name and is the only place a project's dates/affiliation
+  appear; `stack[]` renders as tags, `footerLink[]` as arrow links (omit it and
+  the card simply has no link). `descBullets[]` is kept for reference but is
+  not rendered. The project named `"Agentic Awesome Skills"` automatically
+  shows the live GitHub star count (see §4, star automation).
+- `otherProjects[]` — compact grid cards; `description` is plain text
+  (**bold** is *not* parsed here) and only `stack[0]` is shown.
 
 ### Education (`educationInfo.schools[]`)
 

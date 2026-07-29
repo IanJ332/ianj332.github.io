@@ -90,6 +90,17 @@ const skillsSection = {
 };
 
 // Education Section
+//
+// ── ENTRY TEMPLATE ──────────────────────────────────────────────────────────
+//   {
+//     schoolName: "University",
+//     logo: "/assets/images/xLOGO.png",
+//     subHeader: "Degree",            // no parenthetical abbreviations
+//     duration: "Mon YYYY - Mon YYYY" // or "Expected Graduation: Mon YYYY"
+//     location: "City, ST",           // place only, same rule as experience
+//     descBullets: ["GPA / honours / focus areas"]
+//   }
+// ────────────────────────────────────────────────────────────────────────────
 const educationInfo = {
   display: true,
   schools: [
@@ -234,6 +245,30 @@ const workExperiences = {
 };
 
 // Featured Projects & Research Showcase
+//
+// ── FEATURED ENTRY TEMPLATE (featuredProjects[] — large cards) ───────────────
+//   {
+//     projectName: "Name: Descriptive Subtitle",
+//     image: "/assets/images/xLOGO.png",   // defaults to me.png when unbranded
+//     subtitle: "Domain · Affiliation · Mon YYYY - Mon YYYY", // line under title;
+//                                          // the only place dates are shown here
+//     featuredSummary: "One paragraph. **Bold** the architecture and the result.",
+//     descBullets: [ ... ],                // stored for reference; not rendered
+//     stack: ["Tag", "Tag"],               // rendered as chips
+//     footerLink: [{ name: "View GitHub Repo", url: "https://..." }] // optional
+//   }
+//
+// ── COMPACT ENTRY TEMPLATE (otherProjects[] — grid cards) ───────────────────
+//   {
+//     projectName: "Name",
+//     image: "/assets/images/xLOGO.png",   // not rendered today; kept for parity
+//     description: "Two or three sentences. Plain text — ** is NOT parsed here.",
+//     stack: ["Primary tag first"],        // only stack[0] is displayed
+//     footerLink: [{ name: "View GitHub Repo", url: "https://..." }]
+//   }
+//
+// Array order = page order; newest / most significant first.
+// ────────────────────────────────────────────────────────────────────────────
 const bigProjects = {
   title: "Selected Works & Agentic Projects",
   subtitle: "SOFTWARE ENGINEERING & AI RESEARCH",

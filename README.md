@@ -1,51 +1,62 @@
-# Ian Jiang - Portfolio 2.0
+# Ian Jiang — Portfolio 3.0
+
 ![Total Stars](https://img.shields.io/endpoint?url=https://ianj332.github.io/stars.json)
 
-A refined, high-performance portfolio built with **Vite, React, and TailwindCSS**.
-Designed with the "Refined Technical Editorial" aesthetic.
+A high-performance personal site built with **Vite, React 18 and TailwindCSS**,
+combining the "Refined Technical Editorial" aesthetic with a real-time WebGL
+avatar stage.
 
-## 🌟 v3.0 3D Rebuild Branch (`v3.0-rebuild`)
+**Live:** [ianj332.github.io](https://ianj332.github.io) — served from the
+`gh-pages` branch, built from `main`.
 
-The `v3.0-rebuild` branch contains the isolated 3D personal website environment:
-- **Local Dev Server**: `npm run dev:v3` or `bash start-v3.sh`
-- **3D Assets & Site Folder**: [`v3.0-site/`](./v3.0-site/) (Contains HTML, CSS, JS, 10.4MB 3D Model `.glb`, stickers, HDRI maps)
-- **Documentation**: See [`v3.0-site/README.md`](./v3.0-site/README.md) for complete asset details and migration audit.
+## 🚀 Getting Started
 
-## 🚀 Getting Started (v2.0)
+```bash
+npm install
+npm run dev        # http://localhost:5173
+npm run build      # production build into dist/ (refreshes the star count first)
+npm run preview    # serve the production build locally
+npm run deploy     # build + publish dist/ to the gh-pages branch
+```
 
-Since Node.js was not detected in the environment, the project files have been generated but dependencies are not installed.
+## ✍️ Updating Content
 
-### ⚡ Quick Start (Virtual Environment)
-The project is set up with a self-contained **Python virtual environment** that includes Node.js.
+All copy lives in **`src/data/portfolio.js`** — no component edits are needed
+for routine updates. Each section is preceded by an **entry template** comment
+block documenting every field, which corner of the card it renders in, and the
+formatting rules (only `**bold**` is parsed; `date` holds dates only,
+`location` holds places only).
 
-1.  **Activte the environment**:
-    ```powershell
-    .\venv\Scripts\activate
-    ```
-2.  **Run the development server**:
-    ```powershell
-    npm run dev
-    ```
-
-*(Dependencies are already installed in the virtual environment)*
-Open [http://localhost:5173](http://localhost:5173) to view it.
+See [`TECH_NOTES.md`](./TECH_NOTES.md) for the full developer and maintenance
+guide: architecture, glassmorphism invariants, avatar/shader calibration,
+performance rules, and the release checklist.
 
 ## 🎨 Design System
 
 *   **Typography:** Outfit (Display), DM Sans (Body), Space Mono (Code).
 *   **Colors:** Gunmetal (`#0a0a0a`) & Charcoal (`#171717`) with Indigo accents.
-*   **Aesthetic:** Editorial Dark Mode with Glassmorphism and subtle noise textures.
+*   **Aesthetic:** Editorial dark/light mode with glassmorphism and subtle noise.
 
 ## 📁 Project Structure
 
-*   `src/data/portfolio.js`: **CMS-like Data Source**. Edit this file to update your content.
-*   `src/App.jsx`: Main single-page application structure.
-*   `src/index.css`: Global styles and Tailwind configuration.
-*   `legacy_backup/`: Contains your previous project files.
+*   `src/data/portfolio.js` — **single source of truth** for all site content.
+*   `src/App.jsx` — page shell: nav, hero, sections, footer.
+*   `src/components/` — avatar canvas, tilt cards, floating badges, cursor.
+*   `src/index.css` — design tokens and component classes.
+*   `public/assets/` — logos, images and the 3D avatar GLB chunks.
+*   `v3.0-site/` — standalone 3D reference environment (`npm run dev:v3`).
+*   `scripts/` — star-count automation and migration/audit utilities.
 
 ## 🛠 Tech Stack
 
-*   **Core:** React 18, Vite
+*   **Core:** React 18, Vite 5
+*   **3D:** Three.js, React Three Fiber, Drei, Postprocessing
 *   **Styling:** TailwindCSS 3.4
 *   **Animation:** Framer Motion
 *   **Icons:** Lucide React
+
+## 🌿 Branches
+
+*   `main` — current v3 source of truth; every release is built from here.
+*   `gh-pages` — generated deploy output (never edit by hand).
+*   `v2-backup` — preserved v2.0 portfolio, kept as a fallback.
