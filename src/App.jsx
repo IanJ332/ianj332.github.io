@@ -559,6 +559,11 @@ const ProjectsSection = ({ stars }) => (
                                         <h3 className="text-display-light text-[length:var(--fs-h3)] text-[var(--text-main)]">
                                             {project.projectName}
                                         </h3>
+                                        {project.subtitle && (
+                                            <span className="block text-code text-[11px] text-[var(--text-faint)] truncate">
+                                                {project.subtitle}
+                                            </span>
+                                        )}
                                         {isAgenticSkills && stars && stars !== 'GitHub stars unavailable' && (
                                             <span className="inline-flex items-center gap-1 mt-1 text-code text-[10px] px-2 py-0.5 rounded-full text-amber-600 dark:text-amber-300 bg-amber-500/10 border border-amber-500/25">
                                                 ★ {stars} stars

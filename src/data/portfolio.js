@@ -125,6 +125,19 @@ const workExperiences = {
   display: true,
   experience: [
     {
+      role: "Software Engineer",
+      company: "Paddock",
+      companylogo: "/assets/images/me.png",
+      location: "Social Platform Infrastructure",
+      date: "May 2026 - Present",
+      descBullets: [
+        "Architected a **database-first composite keyset pagination** pipeline across **PostgreSQL / Supabase** and **Flutter**, combining CTE-based mutual-follow enrichment, **is_mutual / created_at** seek predicates, and partial indexes to eliminate pagination drift, duplicate records, and full-list memory loading.",
+        "Collapsed follower and following metrics onto **zero-payload count APIs**, replacing client-side full-row aggregation with exact **Content-Range** head queries and zero-row limits — cutting response payload from **67.3 kB to 0.2 kB (99.7% reduction)** across profile, onboarding, and feed render paths.",
+        "Hardened the social-service backend into a **deterministic test harness**: **SECURITY INVOKER** RPCs, pinned PostgreSQL search paths, RLS-aware isolation, baseline-delta assertions, and deterministic cursor fixtures, delivering **46/46 passing tests** over pagination, privacy-state, aggregation, and concurrency scenarios.",
+        "Ran an **eval-driven agentic loop** spanning implementation, static analysis, and human validation, surfacing latent unpaginated count queries, timestamp-collision flakiness, and RLS cleanup failures, then converting each finding into targeted remediation and production-ready pull requests."
+      ]
+    },
+    {
       role: "Agentic AI Infrastructure Engineer",
       company: "Agentic Awesome Skills",
       companylogo: "/assets/images/me.png",
@@ -219,6 +232,36 @@ const bigProjects = {
       ]
     },
     {
+      projectName: "GrayPulse: Fail-Slow Control Plane",
+      image: "/assets/images/me.png",
+      subtitle: "Distributed Inference Systems · UIUC CS525",
+      featuredSummary: "A **control-plane mitigation framework** for gray failures in distributed inference, treating fail-slow backends as **sustained distributional drift** rather than binary health-check failures.",
+      descBullets: [
+        "Separated data plane from control plane: an **aiohttp byte-stream gateway** forwards Triton tensor payloads untouched while a passive telemetry daemon drives **HAProxy runtime drain** decisions.",
+        "Built a **robust median/MAD z-score detector** with a three-tick sustained-evidence gate, isolating persistent latency and queue-depth outliers without absolute SLO thresholds.",
+        "Benchmarked a **12-backend Triton pool** on a 20-node cluster under scripted CPU/memory fault injection, holding **P99 at ~168 ms** where Peak-EWMA routing reached ~4.8 s and Round Robin ~11.8 s, at **100% success rate**."
+      ],
+      stack: ["Distributed Systems", "Triton", "HAProxy", "Python", "Chaos Engineering"],
+      footerLink: [
+        {
+          name: "View GitHub Repo",
+          url: "https://github.com/IanJ332/cs525_advanced_distributed_systems"
+        }
+      ]
+    },
+    {
+      projectName: "GeoAI: Multimodal Species Prediction",
+      image: "/assets/images/uiucLOGO.png",
+      subtitle: "Geospatial Foundation Research · Dec 2025 - Jun 2026",
+      featuredSummary: "**State-of-the-art** multi-label plant species prediction on the **GeoLifeCLEF 2025 / GeoPlant@PAISS** benchmark via token-based multimodal fusion of Earth-observation signals.",
+      descBullets: [
+        "Achieved **SOTA Sample-F1 of 0.22306**, beating the strongest official baseline by **+0.058** and the best public leaderboard reference by **+0.025**.",
+        "Designed a **middle-fusion token architecture** — DINOv3 ConvNeXt Sentinel encoder, Landsat and bioclimatic temporal tokenizers, gated cross-modal attention, and multi-head readout across 11,255 species.",
+        "Engineered a **5-fold spatially-blocked evaluation harness** with Asymmetric Loss for long-tail supervision and out-of-fold decision-rule calibration over top-k, min-k, and threshold."
+      ],
+      stack: ["GeoAI", "PyTorch", "Multimodal Fusion", "Remote Sensing", "SOTA"]
+    },
+    {
       projectName: "Helper Bob: LLM Infrastructure",
       image: "/assets/images/helperbobLOGO.svg",
       subtitle: "LLM Orchestration & Prompt Layer",
@@ -296,6 +339,18 @@ const bigProjects = {
         {
           name: "Read Paper PDF",
           url: "https://github.com/nilgeoutim/CS546_MajorityErrorDebate/blob/main/CS546_GP.pdf"
+        }
+      ]
+    },
+    {
+      projectName: "Airbnb Market Intelligence Engine",
+      image: "/assets/images/me.png",
+      description: "Lambda-style dual-store pipeline over a 1.4 GB / 20M-row Airbnb corpus, pairing a MongoDB hot layer (sub-500ms dashboards) with BigQuery analytics behind an LLM-routed natural-language search plane.",
+      stack: ["Data Engineering", "MongoDB", "BigQuery", "NVIDIA NIM", "Python"],
+      footerLink: [
+        {
+          name: "View GitHub Repo",
+          url: "https://github.com/IanJ332/CS498_FINAL_PRO"
         }
       ]
     },
