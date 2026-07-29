@@ -96,7 +96,7 @@ const educationInfo = {
     {
       schoolName: "University of Illinois Urbana-Champaign",
       logo: "/assets/images/uiucLOGO.png",
-      subHeader: "Master of Computer Science (MCS)",
+      subHeader: "Master of Computer Science",
       duration: "Expected Graduation: Dec 2026",
       location: "Urbana-Champaign, IL",
       descBullets: [
@@ -126,10 +126,11 @@ const workExperiences = {
   experience: [
     {
       role: "Software Engineer",
-      company: "Paddock",
-      companylogo: "/assets/images/me.png",
+      company: "ThePaddock",
+      companylogo: "/assets/images/paddockLOGO.png",
       location: "Social Platform Infrastructure",
       date: "May 2026 - Present",
+      url: "https://apps.apple.com/us/app/thepaddock/id6757203697",
       descBullets: [
         "Architected a **database-first composite keyset pagination** pipeline across **PostgreSQL / Supabase** and **Flutter**, combining CTE-based mutual-follow enrichment, **is_mutual / created_at** seek predicates, and partial indexes to eliminate pagination drift, duplicate records, and full-list memory loading.",
         "Collapsed follower and following metrics onto **zero-payload count APIs**, replacing client-side full-row aggregation with exact **Content-Range** head queries and zero-row limits — cutting response payload from **67.3 kB to 0.2 kB (99.7% reduction)** across profile, onboarding, and feed render paths.",
@@ -232,10 +233,10 @@ const bigProjects = {
       ]
     },
     {
-      projectName: "GrayPulse: Fail-Slow Control Plane",
-      image: "/assets/images/me.png",
-      subtitle: "Distributed Inference Systems · UIUC CS525",
-      featuredSummary: "A **control-plane mitigation framework** for gray failures in distributed inference, treating fail-slow backends as **sustained distributional drift** rather than binary health-check failures.",
+      projectName: "GrayPulse: Control-Plane Mitigation for Fail-Slow Inference",
+      image: "/assets/images/uiucLOGO.png",
+      subtitle: "Distributed Inference Reliability · AI Alignment Illinois",
+      featuredSummary: "A **trace-driven control-plane framework** that detects fail-slow inference backends as **sustained latency and queue-distribution drift**. GrayPulse separates tensor-preserving forwarding from **median/MAD-based backend control** and uses HAProxy draining to preserve the success rate while bounding **P99 latency** on a **12-backend Triton cluster**.",
       descBullets: [
         "Separated data plane from control plane: an **aiohttp byte-stream gateway** forwards Triton tensor payloads untouched while a passive telemetry daemon drives **HAProxy runtime drain** decisions.",
         "Built a **robust median/MAD z-score detector** with a three-tick sustained-evidence gate, isolating persistent latency and queue-depth outliers without absolute SLO thresholds.",
@@ -250,10 +251,10 @@ const bigProjects = {
       ]
     },
     {
-      projectName: "GeoAI: Multimodal Species Prediction",
+      projectName: "GeoPlant Fusion: Multimodal Species Prediction",
       image: "/assets/images/uiucLOGO.png",
-      subtitle: "Geospatial Foundation Research · Dec 2025 - Jun 2026",
-      featuredSummary: "**State-of-the-art** multi-label plant species prediction on the **GeoLifeCLEF 2025 / GeoPlant@PAISS** benchmark via token-based multimodal fusion of Earth-observation signals.",
+      subtitle: "Geospatial Multimodal Learning · CS598 Research · Dec 2025 - Jun 2026",
+      featuredSummary: "An **evaluation-driven multimodal learning system** for predicting extremely long-tail plant species using Sentinel-2 imagery, Landsat and bioclimatic time series, environmental covariates, and geographic metadata. **Token-based cross-modal fusion** with spatial 5-fold validation and OOF calibration achieved a **state-of-the-art Sample-F1 of 0.2231** on GeoPlant@PAISS.",
       descBullets: [
         "Achieved **SOTA Sample-F1 of 0.22306**, beating the strongest official baseline by **+0.058** and the best public leaderboard reference by **+0.025**.",
         "Designed a **middle-fusion token architecture** — DINOv3 ConvNeXt Sentinel encoder, Landsat and bioclimatic temporal tokenizers, gated cross-modal attention, and multi-head readout across 11,255 species.",
@@ -315,6 +316,18 @@ const bigProjects = {
   ],
   otherProjects: [
     {
+      projectName: "Airbnb Market Intelligence Engine",
+      image: "/assets/images/me.png",
+      description: "Lambda-style hot/cold data platform over a 1.4 GB, 20M+ row Airbnb corpus. Combines MongoDB vector search for low-latency semantic retrieval with BigQuery for full-history analytics, orchestrated through a schema-grounded NVIDIA NIM query plane and deterministic execution harness.",
+      stack: ["Data Engineering", "MongoDB", "BigQuery", "NVIDIA NIM", "Python"],
+      footerLink: [
+        {
+          name: "View GitHub Repo",
+          url: "https://github.com/IanJ332/CS498_FINAL_PRO"
+        }
+      ]
+    },
+    {
       projectName: "Sign Language Recognition",
       image: "/assets/images/how2signlogo.png",
       description: "Automated hyperparameter tuning for a MobileNetV2 + CNN-LSTM backbone via Bayesian Optimization, achieving 98.4% accuracy.",
@@ -339,18 +352,6 @@ const bigProjects = {
         {
           name: "Read Paper PDF",
           url: "https://github.com/nilgeoutim/CS546_MajorityErrorDebate/blob/main/CS546_GP.pdf"
-        }
-      ]
-    },
-    {
-      projectName: "Airbnb Market Intelligence Engine",
-      image: "/assets/images/me.png",
-      description: "Lambda-style dual-store pipeline over a 1.4 GB / 20M-row Airbnb corpus, pairing a MongoDB hot layer (sub-500ms dashboards) with BigQuery analytics behind an LLM-routed natural-language search plane.",
-      stack: ["Data Engineering", "MongoDB", "BigQuery", "NVIDIA NIM", "Python"],
-      footerLink: [
-        {
-          name: "View GitHub Repo",
-          url: "https://github.com/IanJ332/CS498_FINAL_PRO"
         }
       ]
     },

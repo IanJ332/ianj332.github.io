@@ -560,7 +560,7 @@ const ProjectsSection = ({ stars }) => (
                                             {project.projectName}
                                         </h3>
                                         {project.subtitle && (
-                                            <span className="block text-code text-[11px] text-[var(--text-faint)] truncate">
+                                            <span className="block text-code text-[11px] leading-relaxed text-[var(--text-faint)]">
                                                 {project.subtitle}
                                             </span>
                                         )}
