@@ -307,7 +307,7 @@ const TerminalIdentityPanel = ({ stars }) => (
         </div>
 
         <div className="p-5 space-y-3.5">
-            <TerminalRow prompt="iam whoami">Student / Software Engineer / ML Engineer</TerminalRow>
+            <TerminalRow prompt="iam">Software Engineer / ML Engineer</TerminalRow>
             <TerminalRow prompt="iam focus">GAN · LLM infra · RAG · multimodal · AI guardrails</TerminalRow>
             <TerminalRow prompt="iam current">UIUC AI Alignment Lab</TerminalRow>
             <TerminalRow prompt="iam github contributor">
@@ -378,17 +378,15 @@ const HeroSection = ({ stars }) => {
                         <div className="eyebrow mb-5">
                             <span className="text-[var(--text-accent)] font-semibold">01</span>
                             <span className="w-6 h-px bg-[var(--border-strong)]" />
-                            <span>Hero / Introduction</span>
+                            <span>Introduction</span>
                         </div>
 
                         <h2 className="text-display text-[length:var(--fs-h1)] text-[var(--text-main)] mb-4">
-                            ML Engineer &<br />Software Engineer
+                            Software Engineer
                         </h2>
 
                         <p className="text-body text-[var(--text-dim)] mb-7 max-w-sm">
-                            Building AI systems, backend infrastructure, and production-facing applications.
-                            Focused on LLM infrastructure, retrieval systems, and practical guardrails for
-                            safer AI.
+                            {formatText("Building **data-intensive backend systems, distributed services, and applied ML infrastructure**.")}
                         </p>
 
                         <div className="flex flex-wrap items-center gap-3">
@@ -460,7 +458,7 @@ const ExperienceSection = () => (
     <section id="trajectory" className="py-24 md:py-36 relative">
         <div className="container mx-auto px-6 md:px-12">
             <div className="max-w-2xl lg:max-w-[56%]">
-                <SectionHeading number="02" label="Trajectory & Work Experience" />
+                <SectionHeading number="02" label="Experience" />
 
                 <div className="relative pl-7 md:pl-11 ml-2 space-y-6">
                     <div className="timeline-rail absolute left-0 top-2 bottom-2 w-px" />
@@ -538,7 +536,7 @@ const ProjectsSection = ({ stars }) => (
     <section id="projects" className="py-24 md:py-36 relative">
         <div className="container mx-auto px-6 md:px-12">
             <div className="max-w-2xl lg:max-w-[58%]">
-                <SectionHeading number="04" label="Selected Works & Research" />
+                <SectionHeading number="04" label="Selected Projects & Research" />
 
                 <div className="space-y-5 mb-14">
                     {bigProjects.featuredProjects.map((project, i) => {
@@ -607,7 +605,7 @@ const ProjectsSection = ({ stars }) => (
                 </div>
 
                 <div className="pt-8 border-t border-[var(--border-dim)]">
-                    <h3 className="section-label mb-6">More Open Source & Research</h3>
+                    <h3 className="section-label mb-6">More Projects</h3>
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         {bigProjects.otherProjects.map((project, i) => (
                             <RevealCard
@@ -654,7 +652,7 @@ const AcademicSection = () => (
     <section id="academic" className="py-24 md:py-36 relative">
         <div className="container mx-auto px-6 md:px-12">
             <div className="max-w-2xl lg:max-w-[58%]">
-                <SectionHeading number="05" label="Academic Credentials" />
+                <SectionHeading number="05" label="Education" />
 
                 <div className="grid grid-cols-1 gap-5">
                     {educationInfo.schools.map((school, i) => {

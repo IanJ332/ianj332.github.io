@@ -35,7 +35,7 @@ const socialMediaLinks = {
 
 // Enhanced Tech Stack & Skill Vault
 const skillsSection = {
-  title: "Technical Expertise & Skill Vault",
+  title: "Technical Skills",
   subTitle: "ENGINEERING PROFICIENCY & ARCHITECTURAL STACK",
   introText: "Production-grade experience across AI Infrastructure, Scalable Microservices, Cloud Orchestration, and Modern High-Performance Web Applications.",
   softwareSkills: [
@@ -163,10 +163,9 @@ const workExperiences = {
       date: "May 2026 - Present",
       url: "https://apps.apple.com/us/app/thepaddock/id6757203697",
       descBullets: [
-        "**Built a database-first social graph pipeline** across **PostgreSQL, Supabase, and Flutter** using composite keyset pagination, database-side mutual-follow ranking, and partial indexes to keep infinite scroll stable under concurrent follow/unfollow updates.",
-        "**Replaced client-side list aggregation with zero-row exact-count queries**, reducing follower/following payloads from 67.3 kB to 0.2 kB (**99.7% reduction**).",
-        "**Hardened the service with deterministic, RLS-aware integration testing and AI-assisted code review**, catching pagination drift, timestamp-collision flakiness, and state-isolation bugs before merge.",
-        "**Owned the platform-wide evolution from a car-centric domain model to a multi-vehicle architecture**, extending the vehicle taxonomy and data ingestion/merge pipeline for motorcycles, resolving cross-layer schema and dependency constraints, and shipping end-to-end motorcycle support across the app."
+        "**Built a database-first social graph serving layer** across PostgreSQL, Supabase, and Flutter, using composite keyset pagination, database-side mutual-follow ranking, and partial indexes to keep infinite scroll stable under concurrent graph mutations.",
+        "**Reduced follower and following payloads by 99.7%** by replacing client-side list hydration with metadata-only exact-count queries.",
+        "**Evolved the vehicle domain from car-only to multi-vehicle support**, extending ingestion and merge pipelines for motorcycles while resolving schema, dependency, and UI integration constraints across the app."
       ]
     },
     {
@@ -187,7 +186,7 @@ const workExperiences = {
       companylogo: "/assets/images/uiucLOGO.png",
       location: "Urbana-Champaign, IL",
       date: "Since Jan 2026",
-      url: "https://illinois.edu",
+      url: "https://aialignmentillinois.org/",
       descBullets: [
         "Led and engineered a **Multi-Agent Debate** framework with role-specialized personas and **dynamic anchoring** to resolve correlated reasoning failures and consensus drift in complex reasoning tasks.",
         "Developed a critic-actor revision pipeline with **3D confidence scoring** (Logic, Confidence, and Reasoning-Question Alignment scores), boosting LLM reasoning accuracy by **40%+**."
@@ -318,7 +317,13 @@ const bigProjects = {
         "Designed a **middle-fusion token architecture** — DINOv3 ConvNeXt Sentinel encoder, Landsat and bioclimatic temporal tokenizers, gated cross-modal attention, and multi-head readout across 11,255 species.",
         "Engineered a **5-fold spatially-blocked evaluation harness** with Asymmetric Loss for long-tail supervision and out-of-fold decision-rule calibration over top-k, min-k, and threshold."
       ],
-      stack: ["GeoAI", "PyTorch", "Multimodal Fusion", "Remote Sensing", "SOTA"]
+      stack: ["GeoAI", "PyTorch", "Multimodal Fusion", "Remote Sensing", "SOTA"],
+      footerLink: [
+        {
+          name: "View GitHub Repo",
+          url: "https://github.com/MaojieXu/CS598_GEOAI"
+        }
+      ]
     },
     {
       projectName: "Helper Bob: LLM Infrastructure",
