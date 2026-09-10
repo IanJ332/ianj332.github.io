@@ -1,0 +1,128 @@
+{
+  "metadata": {
+    "label": "final-retained-throttled",
+    "capturedAt": "2026-09-10T18:05:24.890Z",
+    "url": "http://127.0.0.1:4173/",
+    "viewport": {
+      "width": 1366,
+      "height": 768
+    },
+    "cpuSlowdown": 4,
+    "run": 1,
+    "chromePath": "C:/Program Files/Google/Chrome/Application/chrome.exe",
+    "durationMs": 20000,
+    "warmupMs": 8000,
+    "touchEmulation": false
+  },
+  "scenario": {
+    "label": "return",
+    "frames": {
+      "samples": 2367,
+      "averageFps": 118.29794890248291,
+      "onePercentLowFps": 60.60606060606061,
+      "frameTimeAverageMs": 8.453231939163498,
+      "frameTimeMedianMs": 8.300000000001091,
+      "frameTimeP95Ms": 8.5,
+      "frameTimeP99Ms": 16.5,
+      "framesOver16_7Ms": 6,
+      "framesOver33_3Ms": 0,
+      "framesOver50Ms": 0,
+      "framesOver16_7Percent": 0.25348542458808615,
+      "jankyFramesPercent": 0
+    },
+    "longTasks": {
+      "count": 0,
+      "longestMs": 0,
+      "totalMs": 0,
+      "totalBlockingTimeMs": 0
+    },
+    "webVitals": {
+      "lcpMs": null,
+      "cls": 0,
+      "inpMs": null
+    },
+    "mainThread": {
+      "TaskDuration": 988.836,
+      "ScriptDuration": 230.16400000000002,
+      "LayoutDuration": 0,
+      "RecalcStyleDuration": 0,
+      "V8CompileDuration": 0,
+      "JSHeapUsedSize": 212428,
+      "JSHeapTotalSize": -786432,
+      "Nodes": 4,
+      "Documents": 1,
+      "Frames": 2,
+      "LayoutCount": 0,
+      "RecalcStyleCount": 0
+    },
+    "webgl": {
+      "sampledDisplayFrames": 2367,
+      "renderedFrames": 0,
+      "callsAverage": null,
+      "callsP95": null,
+      "trianglesAverage": null,
+      "trianglesP95": null,
+      "pointsAverage": null,
+      "linesAverage": null,
+      "resources": {
+        "buffers": {
+          "created": 0,
+          "deleted": 0,
+          "active": 0
+        },
+        "textures": {
+          "created": 0,
+          "deleted": 0,
+          "active": 0
+        },
+        "programs": {
+          "created": 0,
+          "deleted": 0,
+          "active": 0
+        },
+        "framebuffers": {
+          "created": 0,
+          "deleted": 0,
+          "active": 0
+        },
+        "renderbuffers": {
+          "created": 0,
+          "deleted": 0,
+          "active": 0
+        },
+        "vertexArrays": {
+          "created": 0,
+          "deleted": 0,
+          "active": 0
+        }
+      },
+      "canvases": [],
+      "gpu": null
+    },
+    "raf": {
+      "requests": 4734,
+      "callbacks": 4734,
+      "callbacksPerSecond": 236.58407380439988
+    },
+    "memory": {
+      "jsHeapUsedBytes": 2368368,
+      "jsHeapTotalBytes": 3670016,
+      "domNodes": 54,
+      "documents": 7
+    },
+    "listeners": {
+      "added": {
+        "DOMContentLoaded": 1,
+        "click": 2
+      },
+      "removed": {},
+      "active": {
+        "DOMContentLoaded": 1,
+        "click": 2
+      }
+    },
+    "durationMs": 20009.799999952316,
+    "finalScrollY": 0,
+    "scrollHeight": 768
+  }
+}

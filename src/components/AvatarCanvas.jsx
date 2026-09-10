@@ -128,6 +128,7 @@ const RIM_UNIFORM_DEFAULTS = () => ({
     uLightDir: { value: new THREE.Vector3(0, 0, 1) },
     uTint: { value: new THREE.Color('#ffffff') },
     uTintAmount: { value: 0 },
+    uEyeOffset: { value: new THREE.Vector2(0, 0) },
 });
 
 const injectRimShader = (material, uniforms) => {
@@ -143,35 +144,35 @@ const injectRimShader = (material, uniforms) => {
                  uniform float uRimPower;
                  uniform vec3  uLightDir;
                  uniform vec3  uTint;
-                 uniform float uTintAmount;`
+                 uniform float uTintAmount;
+                 uniform vec2  uEyeOffset;`
             )
             .replace(
                 '#include <emissivemap_fragment>',
-                `#include <emissivemap_fragment>
+                `// Shader Pupil UV Tracking (Route 3)
+                 vec2 pupilUv = vEmissiveMapUv;
+                 // Target eye UV areas
+                 if ((pupilUv.x > 0.25 && pupilUv.x < 0.42 && pupilUv.y > 0.90) ||
+                     (pupilUv.x > 0.85 && pupilUv.x < 0.98 && pupilUv.y > 0.90)) {
+                     pupilUv += uEyeOffset * vec2(0.015, -0.015);
+                 }
+                 vec4 emissiveColor = texture2D( emissiveMap, pupilUv );
+                 totalEmissiveRadiance *= emissiveColor.rgb;
 
                  // Section colour grade — subtle, never washes the photogrammetry out.
                  totalEmissiveRadiance *= mix( vec3( 1.0 ), uTint, uTintAmount );
 
-                 // Silhouette fresnel. View-space normal.z is the view-alignment
-                 // term, so 1 - |n.z| peaks exactly on the silhouette edge.
+                 // Silhouette fresnel.
                  float rimFresnel = pow( 1.0 - saturate( abs( normal.z ) ), uRimPower );
 
-                 // Directional mask: the rim only lights the side the cursor is on,
-                 // which reads as a real light source orbiting the subject.
+                 // Directional mask.
                  float rimFacing = saturate( dot( normal, normalize( uLightDir ) ) );
                  rimFacing = rimFacing * rimFacing;
 
-                 // RIM_HDR_GAIN pushes the hottest sliver of the rim ABOVE 1.0.
-                 // The baked body texture never exceeds 1.0, so a bloom pass
-                 // thresholded at luminance 1.0 picks up the rim and nothing
-                 // else — that is what makes the glow track the silhouette
-                 // instead of haloing the whole face.
                  totalEmissiveRadiance += uRimColor * rimFresnel * rimFacing * uRimAmount * ${RIM_HDR_GAIN.toFixed(1)};`
             );
     };
-    // Force a program rebuild so onBeforeCompile runs even if the material
-    // was already compiled by a previous mount.
-    material.customProgramCacheKey = () => 'avatar-rim-v1';
+    material.customProgramCacheKey = () => 'avatar-rim-v2';
     material.needsUpdate = true;
 };
 
@@ -191,6 +192,8 @@ const AvatarModel = ({ pointer, scrollVelocity, currentSection, reducedMotion })
        mechanical left-to-right "jump". */
     const spring = useRef({ ry: 0, rx: 0, rz: 0, vy: 0, vx: 0, vz: 0 });
     const posSpring = useRef({ x: 0, y: 1.1, vx: 0, vy: 0 });
+    const eyeLRef = useRef(null);
+    const eyeRRef = useRef(null);
     const lightDir = useMemo(() => new THREE.Vector3(0, 0, 1), []);
     const tmpColor = useMemo(() => new THREE.Color(), []);
 
@@ -216,6 +219,8 @@ const AvatarModel = ({ pointer, scrollVelocity, currentSection, reducedMotion })
        seeing the inside of the back of the head through the face). */
     useEffect(() => {
         const mats = [];
+        eyeLRef.current = scene.getObjectByName('Eye_L');
+        eyeRRef.current = scene.getObjectByName('Eye_R');
         scene.traverse((child) => {
             if (!child.isMesh || !child.material) return;
             const mat = child.material;
@@ -258,6 +263,18 @@ const AvatarModel = ({ pointer, scrollVelocity, currentSection, reducedMotion })
 
         const mx = pointer.current.x;
         const my = pointer.current.y;
+
+        /* ── Eye rotation tracking ────────────────────────────────────────── */
+        const eyeL = eyeLRef.current;
+        const eyeR = eyeRRef.current;
+        if (eyeL && eyeR) {
+            const eyeTargetY = reducedMotion ? 0 : mx * 0.40;
+            const eyeTargetX = reducedMotion ? 0 : -my * 0.28;
+            eyeL.rotation.y = THREE.MathUtils.damp(eyeL.rotation.y, eyeTargetY, 8, delta);
+            eyeL.rotation.x = THREE.MathUtils.damp(eyeL.rotation.x, eyeTargetX, 8, delta);
+            eyeR.rotation.y = THREE.MathUtils.damp(eyeR.rotation.y, eyeTargetY, 8, delta);
+            eyeR.rotation.x = THREE.MathUtils.damp(eyeR.rotation.x, eyeTargetX, 8, delta);
+        }
 
         /* ── Scroll inertia ─────────────────────────────────────────────────
            Velocity is normalised against a quarter viewport-height per frame,
@@ -335,6 +352,18 @@ const AvatarModel = ({ pointer, scrollVelocity, currentSection, reducedMotion })
             3,
             delta
         );
+        uniforms.uEyeOffset.value.x = THREE.MathUtils.damp(
+            uniforms.uEyeOffset.value.x,
+            reducedMotion ? 0 : mx,
+            8,
+            delta
+        );
+        uniforms.uEyeOffset.value.y = THREE.MathUtils.damp(
+            uniforms.uEyeOffset.value.y,
+            reducedMotion ? 0 : my,
+            8,
+            delta
+        );
     });
 
     return (
@@ -362,56 +391,37 @@ const FullscreenAvatarCanvasInner = ({ currentSection, theme }) => {
         []
     );
 
-    /* Pointer is smoothed here (rAF) rather than in useFrame so the raw event
-       stream never produces a rigid, stepped response. */
-    useEffect(() => {
-        let raf;
-        const onMove = (e) => {
-            pointerTarget.current.x = (e.clientX / window.innerWidth) * 2 - 1;
-            pointerTarget.current.y = -(e.clientY / window.innerHeight) * 2 + 1;
-        };
-        const smooth = () => {
-            pointer.current.x += (pointerTarget.current.x - pointer.current.x) * 0.08;
-            pointer.current.y += (pointerTarget.current.y - pointer.current.y) * 0.08;
-            raf = requestAnimationFrame(smooth);
-        };
-        window.addEventListener('pointermove', onMove, { passive: true });
-        raf = requestAnimationFrame(smooth);
-        return () => {
-            window.removeEventListener('pointermove', onMove);
-            cancelAnimationFrame(raf);
-        };
-    }, []);
-
-    useEffect(() => {
-        let last = window.scrollY;
-        let raf;
-        const onScroll = () => {
-            scrollVelocity.current = window.scrollY - last;
-            last = window.scrollY;
-        };
-        const decay = () => {
-            scrollVelocity.current *= 0.9;
-            raf = requestAnimationFrame(decay);
-        };
-        window.addEventListener('scroll', onScroll, { passive: true });
-        raf = requestAnimationFrame(decay);
-        return () => {
-            window.removeEventListener('scroll', onScroll);
-            cancelAnimationFrame(raf);
-        };
-    }, []);
-
-    /* Ambient layers are driven imperatively on rAF. They only ever touch
-       `transform`, so each stays on the compositor — no layout, no paint. */
+    /* Pointer, scroll inertia, and ambient layers share one display-timed
+       callback. Update order and coefficients match the former three loops,
+       but the browser now schedules one callback instead of three. */
     const gridRef = useRef(null);
     const glowRef = useRef(null);
 
     useEffect(() => {
-        if (reducedMotion) return undefined;
+        let lastScrollY = window.scrollY;
         let raf;
         const TILE = 34; // must match --grid-tile in index.css
+
+        const onMove = (event) => {
+            pointerTarget.current.x = (event.clientX / window.innerWidth) * 2 - 1;
+            pointerTarget.current.y = -(event.clientY / window.innerHeight) * 2 + 1;
+        };
+
+        const onScroll = () => {
+            scrollVelocity.current = window.scrollY - lastScrollY;
+            lastScrollY = window.scrollY;
+        };
+
         const tick = () => {
+            pointer.current.x += (pointerTarget.current.x - pointer.current.x) * 0.08;
+            pointer.current.y += (pointerTarget.current.y - pointer.current.y) * 0.08;
+            scrollVelocity.current *= 0.9;
+
+            if (reducedMotion) {
+                raf = requestAnimationFrame(tick);
+                return;
+            }
+
             const gx = pointer.current.x;
             const gy = pointer.current.y;
             if (gridRef.current) {
@@ -429,8 +439,15 @@ const FullscreenAvatarCanvasInner = ({ currentSection, theme }) => {
             }
             raf = requestAnimationFrame(tick);
         };
+
+        window.addEventListener('pointermove', onMove, { passive: true });
+        window.addEventListener('scroll', onScroll, { passive: true });
         raf = requestAnimationFrame(tick);
-        return () => cancelAnimationFrame(raf);
+        return () => {
+            window.removeEventListener('pointermove', onMove);
+            window.removeEventListener('scroll', onScroll);
+            cancelAnimationFrame(raf);
+        };
     }, [reducedMotion]);
 
     const isDark = theme === 'dark';

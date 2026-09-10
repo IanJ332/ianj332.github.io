@@ -1,0 +1,464 @@
+{
+  "metadata": {
+    "label": "validation",
+    "capturedAt": "2026-09-09T20:59:05.561Z",
+    "url": "http://127.0.0.1:4173/",
+    "viewport": {
+      "width": 1366,
+      "height": 768
+    },
+    "cpuSlowdown": 4,
+    "run": 1,
+    "chromePath": "C:/Program Files/Google/Chrome/Application/chrome.exe",
+    "durationMs": 2000,
+    "warmupMs": 1000
+  },
+  "scenario": {
+    "label": "initial",
+    "frames": {
+      "samples": 14,
+      "averageFps": 6.774084288963081,
+      "onePercentLowFps": 1.2121212121212122,
+      "frameTimeAverageMs": 147.62142857142857,
+      "frameTimeMedianMs": 58.30000000000001,
+      "frameTimeP95Ms": 825,
+      "frameTimeP99Ms": 825,
+      "framesOver16_7Ms": 14,
+      "framesOver33_3Ms": 10,
+      "framesOver50Ms": 9,
+      "framesOver16_7Percent": 100,
+      "jankyFramesPercent": 71.42857142857143
+    },
+    "longTasks": {
+      "count": 10,
+      "longestMs": 627,
+      "totalMs": 1641,
+      "totalBlockingTimeMs": 1141
+    },
+    "webVitals": {
+      "lcpMs": 1704,
+      "cls": 0.002036489606400151,
+      "inpMs": null,
+      "fcpMs": 1252
+    },
+    "mainThread": {
+      "TaskDuration": 2156.246,
+      "ScriptDuration": 575.259,
+      "LayoutDuration": 738.5930000000001,
+      "RecalcStyleDuration": 98.68,
+      "V8CompileDuration": 0.443,
+      "JSHeapUsedSize": 5965624,
+      "JSHeapTotalSize": 11010048,
+      "Nodes": 1064,
+      "Documents": 6,
+      "Frames": 5,
+      "LayoutCount": 5,
+      "RecalcStyleCount": 15
+    },
+    "webgl": {
+      "sampledDisplayFrames": 15,
+      "renderedFrames": 0,
+      "callsAverage": null,
+      "callsP95": null,
+      "trianglesAverage": null,
+      "trianglesP95": null,
+      "pointsAverage": null,
+      "linesAverage": null,
+      "resources": {
+        "buffers": {
+          "created": 2,
+          "deleted": 0,
+          "active": 2
+        },
+        "textures": {
+          "created": 22,
+          "deleted": 0,
+          "active": 22
+        },
+        "programs": {
+          "created": 6,
+          "deleted": 0,
+          "active": 6
+        },
+        "framebuffers": {
+          "created": 20,
+          "deleted": 0,
+          "active": 20
+        },
+        "renderbuffers": {
+          "created": 6,
+          "deleted": 0,
+          "active": 6
+        },
+        "vertexArrays": {
+          "created": 6,
+          "deleted": 0,
+          "active": 6
+        }
+      },
+      "canvases": [
+        {
+          "width": 1366,
+          "height": 768,
+          "cssWidth": 1366,
+          "cssHeight": 768
+        }
+      ],
+      "gpu": {
+        "vendor": "Google Inc. (NVIDIA)",
+        "renderer": "ANGLE (NVIDIA, NVIDIA GeForce RTX 5070 Ti Laptop GPU (0x00002F18) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+        "version": "WebGL 2.0 (OpenGL ES 3.0 Chromium)",
+        "maxTextureSize": 16384,
+        "maxSamples": 8
+      }
+    },
+    "raf": {
+      "requests": 51,
+      "callbacks": 46,
+      "callbacksPerSecond": 18.754076973163908
+    },
+    "memory": {
+      "jsHeapUsedBytes": 6430040,
+      "jsHeapTotalBytes": 12058624,
+      "domNodes": 694,
+      "documents": 8
+    },
+    "listeners": {
+      "added": {
+        "test": 1,
+        "abort": 1,
+        "auxclick": 2,
+        "cancel": 1,
+        "canplay": 1,
+        "canplaythrough": 1,
+        "click": 3,
+        "close": 1,
+        "contextmenu": 3,
+        "copy": 2,
+        "cut": 2,
+        "drag": 2,
+        "dragend": 2,
+        "dragenter": 2,
+        "dragexit": 2,
+        "dragleave": 2,
+        "dragover": 2,
+        "dragstart": 2,
+        "drop": 2,
+        "durationchange": 1,
+        "emptied": 1,
+        "encrypted": 1,
+        "ended": 1,
+        "error": 16,
+        "gotpointercapture": 2,
+        "input": 2,
+        "invalid": 1,
+        "keydown": 2,
+        "keypress": 2,
+        "keyup": 2,
+        "load": 16,
+        "loadeddata": 1,
+        "loadedmetadata": 1,
+        "loadstart": 1,
+        "lostpointercapture": 3,
+        "mousedown": 2,
+        "mousemove": 3,
+        "mouseout": 2,
+        "mouseover": 3,
+        "mouseup": 2,
+        "paste": 2,
+        "pause": 1,
+        "play": 1,
+        "playing": 1,
+        "pointercancel": 3,
+        "pointerdown": 3,
+        "pointermove": 4,
+        "pointerout": 2,
+        "pointerover": 2,
+        "pointerup": 3,
+        "progress": 1,
+        "ratechange": 1,
+        "reset": 2,
+        "resize": 3,
+        "seeked": 1,
+        "seeking": 1,
+        "stalled": 1,
+        "submit": 2,
+        "suspend": 1,
+        "timeupdate": 1,
+        "touchcancel": 2,
+        "touchend": 2,
+        "touchstart": 2,
+        "volumechange": 1,
+        "scroll": 4,
+        "toggle": 1,
+        "touchmove": 2,
+        "waiting": 1,
+        "wheel": 3,
+        "animationend": 2,
+        "animationiteration": 2,
+        "animationstart": 2,
+        "dblclick": 3,
+        "focusin": 2,
+        "focusout": 2,
+        "transitionend": 2,
+        "change": 4,
+        "compositionend": 2,
+        "textInput": 2,
+        "compositionstart": 2,
+        "compositionupdate": 2,
+        "selectionchange": 1,
+        "mouseleave": 1,
+        "mouseenter": 1,
+        "webglcontextlost": 1,
+        "webglcontextrestored": 1,
+        "webglcontextcreationerror": 1,
+        "pointerleave": 1
+      },
+      "removed": {
+        "test": 1,
+        "change": 1
+      },
+      "active": {
+        "test": 0,
+        "abort": 1,
+        "auxclick": 2,
+        "cancel": 1,
+        "canplay": 1,
+        "canplaythrough": 1,
+        "click": 3,
+        "close": 1,
+        "contextmenu": 3,
+        "copy": 2,
+        "cut": 2,
+        "drag": 2,
+        "dragend": 2,
+        "dragenter": 2,
+        "dragexit": 2,
+        "dragleave": 2,
+        "dragover": 2,
+        "dragstart": 2,
+        "drop": 2,
+        "durationchange": 1,
+        "emptied": 1,
+        "encrypted": 1,
+        "ended": 1,
+        "error": 16,
+        "gotpointercapture": 2,
+        "input": 2,
+        "invalid": 1,
+        "keydown": 2,
+        "keypress": 2,
+        "keyup": 2,
+        "load": 16,
+        "loadeddata": 1,
+        "loadedmetadata": 1,
+        "loadstart": 1,
+        "lostpointercapture": 3,
+        "mousedown": 2,
+        "mousemove": 3,
+        "mouseout": 2,
+        "mouseover": 3,
+        "mouseup": 2,
+        "paste": 2,
+        "pause": 1,
+        "play": 1,
+        "playing": 1,
+        "pointercancel": 3,
+        "pointerdown": 3,
+        "pointermove": 4,
+        "pointerout": 2,
+        "pointerover": 2,
+        "pointerup": 3,
+        "progress": 1,
+        "ratechange": 1,
+        "reset": 2,
+        "resize": 3,
+        "seeked": 1,
+        "seeking": 1,
+        "stalled": 1,
+        "submit": 2,
+        "suspend": 1,
+        "timeupdate": 1,
+        "touchcancel": 2,
+        "touchend": 2,
+        "touchstart": 2,
+        "volumechange": 1,
+        "scroll": 4,
+        "toggle": 1,
+        "touchmove": 2,
+        "waiting": 1,
+        "wheel": 3,
+        "animationend": 2,
+        "animationiteration": 2,
+        "animationstart": 2,
+        "dblclick": 3,
+        "focusin": 2,
+        "focusout": 2,
+        "transitionend": 2,
+        "change": 3,
+        "compositionend": 2,
+        "textInput": 2,
+        "compositionstart": 2,
+        "compositionupdate": 2,
+        "selectionchange": 1,
+        "mouseleave": 1,
+        "mouseenter": 1,
+        "webglcontextlost": 1,
+        "webglcontextrestored": 1,
+        "webglcontextcreationerror": 1,
+        "pointerleave": 1
+      }
+    },
+    "durationMs": 2452.800000011921,
+    "finalScrollY": 0,
+    "scrollHeight": 8867,
+    "navigation": {
+      "ttfbMs": 58.30000001192093,
+      "domContentLoadedMs": 341,
+      "loadMs": 343.4000000357628,
+      "transferSize": 1228,
+      "encodedBodySize": 928,
+      "decodedBodySize": 2119
+    },
+    "paint": {
+      "first-paint": 292,
+      "first-contentful-paint": 1252
+    },
+    "resources": {
+      "requestCount": 14,
+      "transferredBytes": 11032989,
+      "encodedBytes": 11028789,
+      "decodedBytes": 11986194,
+      "categories": {
+        "other": {
+          "requests": 3,
+          "transferred": 2352,
+          "encoded": 1452,
+          "decoded": 9816
+        },
+        "javascript": {
+          "requests": 5,
+          "transferred": 365380,
+          "encoded": 363880,
+          "decoded": 1284463
+        },
+        "css": {
+          "requests": 1,
+          "transferred": 7939,
+          "encoded": 7639,
+          "decoded": 33608
+        },
+        "image": {
+          "requests": 3,
+          "transferred": 168238,
+          "encoded": 167338,
+          "decoded": 168636
+        },
+        "model": {
+          "requests": 1,
+          "transferred": 10487852,
+          "encoded": 10487552,
+          "decoded": 10487552
+        }
+      },
+      "largest": [
+        {
+          "name": "http://127.0.0.1:4173/models/avatar.glb",
+          "initiatorType": "fetch",
+          "transferSize": 10487852,
+          "encodedBodySize": 10487552,
+          "decodedBodySize": 10487552,
+          "duration": 210.80000001192093
+        },
+        {
+          "name": "http://127.0.0.1:4173/assets/webgl-CKdRhwVd.js",
+          "initiatorType": "script",
+          "transferSize": 258969,
+          "encodedBodySize": 258669,
+          "decodedBodySize": 965112,
+          "duration": 26.600000023841858
+        },
+        {
+          "name": "http://127.0.0.1:4173/assets/react-CjXtRb-8.js",
+          "initiatorType": "other",
+          "transferSize": 47848,
+          "encodedBodySize": 47548,
+          "decodedBodySize": 146196,
+          "duration": 10.699999988079071
+        },
+        {
+          "name": "http://127.0.0.1:4173/assets/motion-DaBu39rC.js",
+          "initiatorType": "other",
+          "transferSize": 39270,
+          "encodedBodySize": 38970,
+          "decodedBodySize": 117034,
+          "duration": 8.100000023841858
+        },
+        {
+          "name": "http://127.0.0.1:4173/assets/images/me.png",
+          "initiatorType": "img",
+          "transferSize": 83259,
+          "encodedBodySize": 82959,
+          "decodedBodySize": 82959,
+          "duration": 3.300000011920929
+        },
+        {
+          "name": "http://127.0.0.1:4173/assets/images/me.png",
+          "initiatorType": "other",
+          "transferSize": 83259,
+          "encodedBodySize": 82959,
+          "decodedBodySize": 82959,
+          "duration": 4.100000023841858
+        },
+        {
+          "name": "http://127.0.0.1:4173/assets/index-BmAoPE1N.js",
+          "initiatorType": "script",
+          "transferSize": 15337,
+          "encodedBodySize": 15037,
+          "decodedBodySize": 47390,
+          "duration": 6.200000047683716
+        },
+        {
+          "name": "http://127.0.0.1:4173/assets/index-BB1ZVrnv.css",
+          "initiatorType": "link",
+          "transferSize": 7939,
+          "encodedBodySize": 7639,
+          "decodedBodySize": 33608,
+          "duration": 6.400000035762787
+        },
+        {
+          "name": "http://127.0.0.1:4173/assets/AvatarCanvas-CqtLfvnT.js",
+          "initiatorType": "script",
+          "transferSize": 3956,
+          "encodedBodySize": 3656,
+          "decodedBodySize": 8731,
+          "duration": 4.399999976158142
+        },
+        {
+          "name": "https://fonts.googleapis.com/css2?family=Inter:wght@100..900&family=Space+Grotesk:wght@300..700&family=JetBrains+Mono:ital,wght@0,100..800;1,100..800&display=swap",
+          "initiatorType": "link",
+          "transferSize": 1190,
+          "encodedBodySize": 890,
+          "decodedBodySize": 8422,
+          "duration": 169.80000001192093
+        },
+        {
+          "name": "http://127.0.0.1:4173/assets/images/paddock.svg",
+          "initiatorType": "img",
+          "transferSize": 1720,
+          "encodedBodySize": 1420,
+          "decodedBodySize": 2718,
+          "duration": 5.300000011920929
+        },
+        {
+          "name": "https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300..700&display=swap",
+          "initiatorType": "link",
+          "transferSize": 768,
+          "encodedBodySize": 468,
+          "decodedBodySize": 1300,
+          "duration": 171.30000001192093
+        }
+      ]
+    }
+  }
+}

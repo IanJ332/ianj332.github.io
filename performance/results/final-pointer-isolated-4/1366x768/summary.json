@@ -1,0 +1,57 @@
+{
+  "metadata": {
+    "label": "final-pointer-isolated-4",
+    "createdAt": "2026-09-10T03:04:06.154Z",
+    "url": "http://127.0.0.1:4173/",
+    "viewport": {
+      "width": 1366,
+      "height": 768
+    },
+    "runs": 1,
+    "durationMs": 20000,
+    "warmupMs": 8000,
+    "cpuSlowdowns": [
+      6
+    ],
+    "scenarios": [
+      "interaction"
+    ],
+    "gpuThrottling": "Unavailable; no GPU slowdown was simulated.",
+    "jankDefinition": "Frame interval >33.3 ms. Counts above 16.7/33.3/50 ms are also retained per run."
+  },
+  "scenarios": {
+    "6x/interaction": {
+      "runs": 1,
+      "averageFps": 33.50727822026916,
+      "onePercentLowFps": 17.182130584192226,
+      "frameTimeAverageMs": 29.84426229508197,
+      "frameTimeP95Ms": 41.70000000000073,
+      "frameTimeP99Ms": 58.20000000000073,
+      "jankyFramesPercent": 34.42622950819672,
+      "longTaskCount": 10,
+      "longestLongTaskMs": 67,
+      "totalLongTaskMs": 553,
+      "totalBlockingTimeMs": 53,
+      "mainThreadBusyMs": 19830.744000000002,
+      "scriptMs": 6525.391999999999,
+      "styleMs": 4005.2149999999997,
+      "layoutMs": 11.19799999999982,
+      "jsHeapUsedBytes": 9453960,
+      "domNodes": 693,
+      "rafCallbacksPerSecond": 133.94684047142917,
+      "drawCallsPerRenderedFrame": 20,
+      "trianglesPerRenderedFrame": 1000017,
+      "lcpMs": null,
+      "fcpMs": null,
+      "cls": 0,
+      "inpMs": null,
+      "transferredBytes": null,
+      "decodedBytes": null,
+      "requestCount": null,
+      "javascriptTransferredBytes": null,
+      "modelTransferredBytes": null,
+      "imageTransferredBytes": null,
+      "fontTransferredBytes": null
+    }
+  }
+}

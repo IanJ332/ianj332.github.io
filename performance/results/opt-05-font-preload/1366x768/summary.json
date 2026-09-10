@@ -1,0 +1,57 @@
+{
+  "metadata": {
+    "label": "opt-05-font-preload",
+    "createdAt": "2026-09-10T01:52:14.434Z",
+    "url": "http://127.0.0.1:4173/",
+    "viewport": {
+      "width": 1366,
+      "height": 768
+    },
+    "runs": 5,
+    "durationMs": 20000,
+    "warmupMs": 5000,
+    "cpuSlowdowns": [
+      6
+    ],
+    "scenarios": [
+      "initial"
+    ],
+    "gpuThrottling": "Unavailable; no GPU slowdown was simulated.",
+    "jankDefinition": "Frame interval >33.3 ms. Counts above 16.7/33.3/50 ms are also retained per run."
+  },
+  "scenarios": {
+    "6x/initial": {
+      "runs": 5,
+      "averageFps": 100.64819576595528,
+      "onePercentLowFps": 41.89698578034312,
+      "frameTimeAverageMs": 9.937500242534274,
+      "frameTimeP95Ms": 16.639999999999965,
+      "frameTimeP99Ms": 25.020000000000255,
+      "jankyFramesPercent": 0.7995196421203873,
+      "longTaskCount": 10.4,
+      "longestLongTaskMs": 516,
+      "totalLongTaskMs": 1796.6,
+      "totalBlockingTimeMs": 1276.6,
+      "mainThreadBusyMs": 17717.8758,
+      "scriptMs": 5872.3556,
+      "styleMs": 2063.124,
+      "layoutMs": 530.5172,
+      "jsHeapUsedBytes": 19436052.8,
+      "domNodes": 693,
+      "rafCallbacksPerSecond": 393.2345710850257,
+      "drawCallsPerRenderedFrame": 19.994614750943697,
+      "trianglesPerRenderedFrame": 994631.7617141965,
+      "lcpMs": 2168.8,
+      "fcpMs": 866.4,
+      "cls": 0.002036489606400151,
+      "inpMs": null,
+      "transferredBytes": 10965651.8,
+      "decodedBytes": 11918576.8,
+      "requestCount": 12.2,
+      "javascriptTransferredBytes": 365366,
+      "modelTransferredBytes": 10487852,
+      "imageTransferredBytes": 101630.8,
+      "fontTransferredBytes": null
+    }
+  }
+}

@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback, useRef, lazy, Suspense } from 'react';
+import React, { useState, useEffect, useCallback, lazy, Suspense } from 'react';
 import { motion } from 'framer-motion';
 import {
     greeting,
@@ -76,10 +76,8 @@ const SECTION_IDS = ['about', 'trajectory', 'expertise', 'projects', 'academic']
 
 const useScrollSection = () => {
     const [currentSection, setCurrentSection] = useState('about');
-    const scrollProgress = useRef(0);
 
     useEffect(() => {
-        const observers = [];
         const ratios = new Map();
 
         const pickBest = () => {
@@ -94,33 +92,25 @@ const useScrollSection = () => {
             if (best && bestRatio > 0.12) setCurrentSection(best);
         };
 
+        const observer = new IntersectionObserver(
+            (entries) => {
+                entries.forEach((entry) => ratios.set(entry.target.id, entry.intersectionRatio));
+                pickBest();
+            },
+            { threshold: [0, 0.1, 0.25, 0.5, 0.75, 1], rootMargin: '-15% 0px -25% 0px' }
+        );
+
         SECTION_IDS.forEach((id) => {
-            const el = document.getElementById(id);
-            if (!el) return;
-            const observer = new IntersectionObserver(
-                (entries) => {
-                    entries.forEach((entry) => ratios.set(id, entry.intersectionRatio));
-                    pickBest();
-                },
-                { threshold: [0, 0.1, 0.25, 0.5, 0.75, 1], rootMargin: '-15% 0px -25% 0px' }
-            );
-            observer.observe(el);
-            observers.push(observer);
+            const element = document.getElementById(id);
+            if (element) observer.observe(element);
         });
 
-        const handleScroll = () => {
-            const total = document.documentElement.scrollHeight - window.innerHeight;
-            if (total > 0) scrollProgress.current = window.scrollY / total;
-        };
-        window.addEventListener('scroll', handleScroll, { passive: true });
-
         return () => {
-            observers.forEach((o) => o.disconnect());
-            window.removeEventListener('scroll', handleScroll);
+            observer.disconnect();
         };
     }, []);
 
-    return { currentSection, scrollProgress };
+    return currentSection;
 };
 
 /* ═══════════════════════════════════════════════════════════
@@ -691,12 +681,26 @@ const Footer = () => (
     </footer>
 );
 
+/* Theme and section changes only affect the fixed UI layers. Keeping the long,
+   static content tree memoized avoids reconciling every card during those
+   interactions; CSS variables still update its appearance exactly as before. */
+const PageContent = React.memo(({ stars }) => (
+    <main className="relative z-10">
+        <HeroSection stars={stars} />
+        <ExperienceSection />
+        <ExpertiseSection />
+        <ProjectsSection stars={stars} />
+        <AcademicSection />
+        <Footer />
+    </main>
+));
+
 /* ═══════════════════════════════════════════════════════════
    APP
    ═══════════════════════════════════════════════════════════ */
 const App = () => {
     const { theme, toggleTheme } = useTheme();
-    const { currentSection } = useScrollSection();
+    const currentSection = useScrollSection();
     const [stars, setStars] = useState(null);
 
     useEffect(() => {
@@ -723,14 +727,7 @@ const App = () => {
             {/* z-10 keeps content above the WebGL stage. Critically, <main> has
                 no opacity / filter / isolation of its own — any of those would
                 turn it into a backdrop root and blank out every glass panel. */}
-            <main className="relative z-10">
-                <HeroSection stars={stars} />
-                <ExperienceSection />
-                <ExpertiseSection />
-                <ProjectsSection stars={stars} />
-                <AcademicSection />
-                <Footer />
-            </main>
+            <PageContent stars={stars} />
         </div>
     );
 };
